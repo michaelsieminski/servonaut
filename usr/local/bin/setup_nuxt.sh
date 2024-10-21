@@ -21,10 +21,10 @@ setup_nuxt() {
     fi
 
     echo -e "📦 Installing dependencies...\n"
-    bun install
+    $HOME/.bun/bin/bun install
 
     echo -e "🏗️  Building the Nuxt project...\n"
-    bun run build
+    $HOME/.bun/bin/bun run build
 
     echo -e "🔧 Creating systemd service for Nuxt...\n"
     cat >/etc/systemd/system/nuxt.service <<EOF
@@ -36,7 +36,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/var/www/app
-ExecStart=/root/.bun/bin/bun run start
+ExecStart=$HOME/.bun/bin/bun run start
 Restart=on-failure
 
 [Install]
