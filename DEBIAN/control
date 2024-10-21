@@ -3,7 +3,7 @@ Version: 1.0
 Section: web
 Priority: optional
 Architecture: arm64
-Depends: curl, unzip, bun
+Depends: curl, unzip
 Maintainer: Michael Sieminski <work.michael@pm.me>
 Description: One-click Nuxt deployment package
   This package automatically sets up a VPS for deploying a Git Nuxt project using Bun and Caddy.

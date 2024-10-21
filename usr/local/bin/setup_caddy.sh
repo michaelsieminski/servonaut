@@ -12,26 +12,14 @@ setup_caddy() {
 
     echo "Setting up Caddy..."
 
-    # Download & Install Caddy Web Server
-    if ! curl -o caddy.tar.gz -L "https://caddyserver.com/api/download?os=linux&arch=arm64&idempotency=29341600578110"; then
+    # Download Caddy binary directly
+    if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=arm64"; then
         echo "Failed to download Caddy. Please check your internet connection."
         return 1
     fi
 
-    if ! tar xzf caddy.tar.gz; then
-        echo "Failed to extract Caddy. The downloaded file might be corrupted."
-        rm caddy.tar.gz
-        return 1
-    fi
-
-    if [ ! -f caddy ]; then
-        echo "Caddy binary not found after extraction."
-        rm caddy.tar.gz
-        return 1
-    fi
-
-    mv caddy /usr/local/bin/
-    rm caddy.tar.gz
+    # Make Caddy executable
+    chmod +x /usr/local/bin/caddy
 
     # Setup Caddy as a service
     cat > /etc/systemd/system/caddy.service << EOF
