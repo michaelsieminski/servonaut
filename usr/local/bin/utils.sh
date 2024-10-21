@@ -8,8 +8,6 @@ check_root() {
 }
 
 update_system() {
-    echo -e "🔄 Updating system packages...\n"
-    sleep 1
     if apt update && apt upgrade -y; then
         echo -e "✅ System packages updated successfully\n"
     else

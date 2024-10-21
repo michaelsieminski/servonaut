@@ -1,7 +1,6 @@
 #!/bin/bash
 
 install_dependencies() {
-    echo -e "📦 Installing required packages...\n"
     if apt install -y curl unzip git; then
         echo -e "✅ Required packages installed successfully\n"
     else

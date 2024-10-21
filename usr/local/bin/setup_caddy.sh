@@ -13,13 +13,17 @@ setup_caddy() {
         fi
 
         server_ip=$(get_server_ip)
+        ipv4=$(echo "$server_ip" | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')
+        if [ -z "$ipv4" ]; then
+            ipv4=$server_ip
+        fi
 
         echo -e "Please create the following A record for your domain:\n"
-        echo -e "┌─────────┬───────┬─────────────┐"
-        echo -e "│  Host   │ Type  │    Value    │"
-        echo -e "├─────────┼───────┼─────────────┤"
-        echo -e "│    @    │   A   │  $server_ip │"
-        echo -e "└─────────┴───────┴─────────────┘\n"
+        printf "┌───────┬──────┬────────────────────────────┐\n"
+        printf "│ %-5s │ %-4s │ %-26s │\n" "Host" "Type" "Value"
+        printf "├───────┼──────┼────────────────────────────┤\n"
+        printf "│ %-5s │ %-4s │ %-26s │\n" "@" "A" "$ipv4"
+        printf "└───────┴──────┴────────────────────────────┘\n"
 
         read -p "Have you added this A record? (yes/no): " dns_confirmation
         echo ""
