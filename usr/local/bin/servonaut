@@ -20,4 +20,4 @@ setup_caddy
 # Setup Nuxt project
 setup_nuxt
 
-echo "Setup complete! You can now access your Nuxt application at https://your-domain.com"
+echo "Setup complete! You can now access your Nuxt application at https://$domain_name"
