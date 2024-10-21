@@ -20,4 +20,5 @@ setup_caddy
 # Setup Nuxt project
 setup_nuxt
 
-echo "Setup complete! You can now access your Nuxt application at https://$domain_name"
+echo "Setup complete! You can now access your Nuxt application at http://$domain_name"
+echo "Follow the instructions provided earlier to enable HTTPS once your DNS is updated."

@@ -51,7 +51,7 @@ EOF
     # Configure Caddy as a reverse proxy
     mkdir -p /etc/caddy
     cat > /etc/caddy/Caddyfile << EOF
-$domain_name {
+http://$domain_name {
     reverse_proxy localhost:3000
 }
 EOF
@@ -62,5 +62,9 @@ EOF
         return 1
     fi
 
-    echo "Caddy setup completed successfully."
+    echo "Caddy is now set up with HTTP. To enable HTTPS:"
+    echo "1. Update your DNS settings to point $domain_name to this server's IP address."
+    echo "2. Once DNS has propagated, run the following command to update Caddy:"
+    echo "   sed -i 's/http:\\/\\///' /etc/caddy/Caddyfile && systemctl reload caddy"
+    echo "Caddy will then automatically obtain and configure SSL certificates."
 }
