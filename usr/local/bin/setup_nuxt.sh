@@ -33,9 +33,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=root
 WorkingDirectory=/var/www/app
-ExecStart=$(which bun) run start
+ExecStart=/root/.bun/bin/bun run start
 Restart=on-failure
 
 [Install]

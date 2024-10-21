@@ -20,5 +20,9 @@ setup_caddy
 # Setup Nuxt project
 setup_nuxt
 
+# Reload systemd and restart Nuxt service
+systemctl daemon-reload
+systemctl restart nuxt.service
+
 echo "Setup complete! You can now access your Nuxt application at http://$domain_name"
 echo "Follow the instructions provided earlier to enable HTTPS once your DNS is updated."
