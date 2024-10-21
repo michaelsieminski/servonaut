@@ -5,24 +5,53 @@ source /usr/local/lib/servonaut/install_dependencies.sh
 source /usr/local/lib/servonaut/setup_caddy.sh
 source /usr/local/lib/servonaut/setup_nuxt.sh
 
+clear
+
+# Display Servonaut ASCII logo
+cat << "EOF"
+
+ _______  _______  _______           _______  _        _______          _________
+(  ____ \(  ____ \(  ____ )|\     /|(  ___  )( (    /|(  ___  )|\     /|\__   __/
+| (    \/| (    \/| (    )|| )   ( || (   ) ||  \  ( || (   ) || )   ( |   ) (   
+| (_____ | (__    | (____)|| |   | || |   | ||   \ | || (___) || |   | |   | |   
+(_____  )|  __)   |     __)( (   ) )| |   | || (\ \) ||  ___  || |   | |   | |   
+      ) || (      | (\ (    \ \_/ / | |   | || | \   || (   ) || |   | |   | |   
+/\____) || (____/\| ) \ \__  \   /  | (___) || )  \  || )   ( || (___) |   | |   
+\_______)(_______/|/   \__/   \_/   (_______)|/    )_)|/     \|(_______)   )_(   
+                                                                                                    
+EOF
+
+echo -e "\nWelcome to Servonaut - Your one-click Nuxt deployment solution!\n"
+sleep 2
+
 # Ensure root privileges for the script to work
 check_root
 
-# Update and upgrade the packages
+echo -e "\n🔄 Updating system packages...\n"
+sleep 1
 update_system
 
-# Install dependencies
+echo -e "\n📦 Installing dependencies...\n"
+sleep 1
 install_dependencies
 
-# Setup Caddy
+echo -e "\n🚀 Setting up Caddy web server...\n"
+sleep 1
 setup_caddy
 
-# Setup Nuxt project
+echo -e "\n🛠️  Setting up Nuxt project...\n"
+sleep 1
 setup_nuxt
 
-# Reload systemd and restart Nuxt service
+echo -e "\n🔄 Reloading systemd and restarting Nuxt service...\n"
+sleep 1
 systemctl daemon-reload
 systemctl restart nuxt.service
 
-echo "Setup complete! You can now access your Nuxt application at http://$domain_name"
-echo "Follow the instructions provided earlier to enable HTTPS once your DNS is updated."
+echo -e "\n✅ Setup complete!\n"
+sleep 1
+echo -e "You can now access your Nuxt application at https://$domain_name\n"
+echo -e "If you encounter any issues, please check the following logs:"
+echo -e "  - Caddy: journalctl -u caddy.service"
+echo -e "  - Nuxt: journalctl -u nuxt.service\n"
+echo -e "Thank you for using Servonaut! Happy coding! 🎉\n"

@@ -1,17 +1,55 @@
 #!/bin/bash
 
 setup_caddy() {
-    # Ask for the domain name
-    read -p "Enter your domain name (e.g., example.com): " domain_name
+    echo -e "📝 Domain Configuration\n"
+    
+    while true; do
+        read -p "Enter your domain name (e.g., example.com): " domain_name
+        echo ""
 
-    # Validate domain name (basic check)
-    if [[ ! $domain_name =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-        echo "Invalid domain name. Please enter a valid domain."
-        return 1
-    fi
+        if [[ ! $domain_name =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            echo -e "❌ Invalid domain name. Please enter a valid domain.\n"
+            continue
+        fi
 
-    echo "Setting up Caddy..."
+        server_ip=$(get_server_ip)
 
+        echo -e "Please create the following A record for your domain:\n"
+        echo -e "┌─────────┬───────┬─────────────┐"
+        echo -e "│  Host   │ Type  │    Value    │"
+        echo -e "├─────────┼───────┼─────────────┤"
+        echo -e "│    @    │   A   │  $server_ip │"
+        echo -e "└─────────┴───────┴─────────────┘\n"
+
+        read -p "Have you added this A record? (yes/no): " dns_confirmation
+        echo ""
+
+        if [[ $dns_confirmation =~ ^[Yy][Ee]?[Ss]?$ ]]; then
+            echo -e "🔍 Checking DNS propagation... This may take a moment.\n"
+            sleep 2
+            if check_dns "$domain_name" "$server_ip"; then
+                echo -e "✅ DNS record verified successfully.\n"
+                break
+            else
+                echo -e "⚠️  The domain does not yet point to the correct IP address."
+                echo -e "   This could be due to DNS propagation delay.\n"
+                echo -e "   Options:"
+                echo -e "   1. Wait and try again (recommended)"
+                echo -e "   2. Continue anyway (may cause issues with HTTPS setup)\n"
+                read -p "Do you want to continue anyway? (yes/no): " continue_anyway
+                echo ""
+                if [[ $continue_anyway =~ ^[Yy][Ee]?[Ss]?$ ]]; then
+                    break
+                fi
+            fi
+        else
+            echo -e "Please add the A record before continuing.\n"
+        fi
+    done
+
+    echo -e "🛠️  Setting up Caddy...\n"
+    sleep 1
+    
     # Download Caddy binary directly
     if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=arm64"; then
         echo "Failed to download Caddy. Please check your internet connection."
@@ -62,9 +100,6 @@ EOF
         return 1
     fi
 
-    echo "Caddy is now set up with HTTP. To enable HTTPS:"
-    echo "1. Update your DNS settings to point $domain_name to this server's IP address."
-    echo "2. Once DNS has propagated, run the following command to update Caddy:"
-    echo "   sed -i 's/http:\\/\\///' /etc/caddy/Caddyfile && systemctl reload caddy"
-    echo "Caddy will then automatically obtain and configure SSL certificates."
+    echo -e "✅ Caddy Server is now set up.\n"
+    sleep 1
 }
