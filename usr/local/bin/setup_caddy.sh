@@ -2,7 +2,7 @@
 
 setup_caddy() {
     echo -e "📝 Domain Configuration\n"
-    
+
     while true; do
         read -p "Enter your domain name (e.g., example.com): " domain_name
         echo ""
@@ -13,16 +13,12 @@ setup_caddy() {
         fi
 
         server_ip=$(get_server_ip)
-        ipv4=$(echo "$server_ip" | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')
-        if [ -z "$ipv4" ]; then
-            ipv4=$server_ip
-        fi
 
         echo -e "Please create the following A record for your domain:\n"
         printf "┌───────┬──────┬────────────────────────────┐\n"
         printf "│ %-5s │ %-4s │ %-26s │\n" "Host" "Type" "Value"
         printf "├───────┼──────┼────────────────────────────┤\n"
-        printf "│ %-5s │ %-4s │ %-26s │\n" "@" "A" "$ipv4"
+        printf "│ %-5s │ %-4s │ %-26s │\n" "@" "A" "$server_ip"
         printf "└───────┴──────┴────────────────────────────┘\n"
 
         read -p "Have you added this A record? (yes/no): " dns_confirmation
@@ -53,7 +49,7 @@ setup_caddy() {
 
     echo -e "🛠️  Setting up Caddy...\n"
     sleep 1
-    
+
     # Download Caddy binary directly
     if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=arm64"; then
         echo "Failed to download Caddy. Please check your internet connection."
@@ -64,7 +60,7 @@ setup_caddy() {
     chmod +x /usr/local/bin/caddy
 
     # Setup Caddy as a service
-    cat > /etc/systemd/system/caddy.service << EOF
+    cat >/etc/systemd/system/caddy.service <<EOF
 [Unit]
 Description=Caddy Web Server
 After=network.target
@@ -92,7 +88,7 @@ EOF
 
     # Configure Caddy as a reverse proxy
     mkdir -p /etc/caddy
-    cat > /etc/caddy/Caddyfile << EOF
+    cat >/etc/caddy/Caddyfile <<EOF
 http://$domain_name {
     reverse_proxy localhost:3000
 }

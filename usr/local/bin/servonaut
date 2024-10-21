@@ -8,7 +8,7 @@ source /usr/local/lib/servonaut/setup_nuxt.sh
 clear
 
 # Display Servonaut ASCII logo
-cat << "EOF"
+cat <<"EOF"
 
  _______  _______  _______           _______  _        _______          _________
 (  ____ \(  ____ \(  ____ )|\     /|(  ___  )( (    /|(  ___  )|\     /|\__   __/

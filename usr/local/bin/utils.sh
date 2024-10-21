@@ -27,13 +27,18 @@ setup_ssh_key() {
     echo -e "\n"
 
     echo -e "🔒 Adding GitHub to known hosts...\n"
-    ssh-keyscan github.com >> /root/.ssh/known_hosts
+    ssh-keyscan github.com >>/root/.ssh/known_hosts
     echo -e "✅ SSH key setup completed\n"
     sleep 1
 }
 
 get_server_ip() {
-    curl -s ifconfig.me
+    local ipv4=$(curl -s4 ifconfig.me)
+    if [ -n "$ipv4" ]; then
+        echo "$ipv4"
+    else
+        curl -s6 ifconfig.me
+    fi
 }
 
 check_dns() {
@@ -41,7 +46,7 @@ check_dns() {
     local expected_ip=$2
     echo -e "🔍 Checking DNS propagation for $domain...\n"
     local resolved_ip=$(dig +short $domain)
-    
+
     if [ "$resolved_ip" = "$expected_ip" ]; then
         echo -e "✅ DNS propagation successful\n"
         return 0

@@ -27,7 +27,7 @@ setup_nuxt() {
     bun run build
 
     echo -e "🔧 Creating systemd service for Nuxt...\n"
-    cat > /etc/systemd/system/nuxt.service << EOF
+    cat >/etc/systemd/system/nuxt.service <<EOF
 [Unit]
 Description=Nuxt Application
 After=network.target
