@@ -6,10 +6,10 @@ source /usr/local/lib/servonaut/utils/git.sh
 source /usr/local/lib/servonaut/install_dependencies.sh
 source /usr/local/lib/servonaut/setup_caddy.sh
 source /usr/local/lib/servonaut/setup_nuxt.sh
+source /usr/local/lib/servonaut/security.sh
 
 clear
 
-# Ensure root privileges for the script to work
 check_root
 
 echo -e "\n🔄 Updating system packages...\n"
@@ -19,6 +19,10 @@ update_system
 echo -e "\n📦 Installing dependencies...\n"
 sleep 1
 install_dependencies
+
+echo -e "\n🛡️ Hardening the server...\n"
+sleep 1
+setup_automatic_security_updates
 
 echo -e "\n🚀 Setting up Caddy web server...\n"
 sleep 1
