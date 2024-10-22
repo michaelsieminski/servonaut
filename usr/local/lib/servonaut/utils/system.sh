@@ -9,9 +9,9 @@ check_root() {
 
 update_system() {
     if apt update && apt upgrade -y; then
-        echo -e "\n✅ System packages updated successfully\n"
+        echo -e "\n✅ System packages updated successfully"
     else
-        echo -e "\n⚠️  Some issues occurred during system update\n"
+        echo -e "\n⚠️  Some issues occurred during system update"
     fi
     sleep 1
 }

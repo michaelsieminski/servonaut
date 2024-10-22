@@ -12,7 +12,7 @@ get_server_ip() {
 check_dns() {
     local domain=$1
     local expected_ip=$2
-    echo -e "🔍 Checking DNS propagation for $domain...\n"
+    echo -e "🔍 Checking DNS propagation for $domain..."
     local resolved_ip=$(dig +short $domain)
 
     if [ "$resolved_ip" = "$expected_ip" ]; then

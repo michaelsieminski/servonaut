@@ -52,8 +52,8 @@ setup_caddy() {
 
     # Download Caddy binary directly
     if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=arm64"; then
-        echo -e"\nFailed to download Caddy. Please check your internet connection."
-        return 1
+        echo -e "\nFailed to download Caddy. Please check your internet connection."
+        exit 1
     fi
 
     # Make Caddy executable
@@ -82,7 +82,7 @@ EOF
     systemctl daemon-reload
     systemctl enable caddy.service
     if ! systemctl start caddy.service; then
-        echo "\nFailed to start Caddy service. Check the logs with 'journalctl -u caddy.service'"
+        echo -e "\nFailed to start Caddy service. Check the logs with 'journalctl -u caddy.service'"
         return 1
     fi
 
@@ -96,7 +96,7 @@ EOF
 
     # Reload Caddy to apply the changes
     if ! systemctl reload caddy.service; then
-        echo "\n Failed to reload Caddy service. Check the logs with 'journalctl -u caddy.service'"
+        echo -e "\n Failed to reload Caddy service. Check the logs with 'journalctl -u caddy.service'"
         return 1
     fi
 

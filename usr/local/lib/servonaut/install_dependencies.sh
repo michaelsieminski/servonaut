@@ -11,7 +11,7 @@ install_dependencies() {
 
     echo -e "\n🚀 Installing Bun...\n"
     if curl -fsSL https://bun.sh/install | bash; then
-        echo -e "\n✅ Bun installed successfully\n"
+        echo -e "\n✅ Bun installed successfully"
         # Add Bun to PATH for the current session
         export BUN_INSTALL="$HOME/.bun"
         export PATH="$BUN_INSTALL/bin:$PATH"
@@ -24,5 +24,5 @@ install_dependencies() {
         return 1
     fi
 
-    echo -e "\n✅ All dependencies installed successfully\n"
+    echo -e "\n✅ All dependencies installed successfully"
 }

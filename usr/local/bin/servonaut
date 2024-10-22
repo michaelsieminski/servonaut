@@ -43,7 +43,6 @@ uninstall)
       ;;
 *)
       echo "Unknown command: $1"
-      show_help
       exit 1
       ;;
 esac
