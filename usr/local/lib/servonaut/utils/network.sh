@@ -16,10 +16,10 @@ check_dns() {
     local resolved_ip=$(dig +short $domain)
 
     if [ "$resolved_ip" = "$expected_ip" ]; then
-        echo -e "\n✅ DNS propagation successful\n"
+        echo -e "\n✅ DNS propagation successful"
         return 0
     else
-        echo -e "\n⚠️  DNS propagation not complete yet\n"
+        echo -e "\n⚠️  DNS propagation not complete yet"
         return 1
     fi
     sleep 1

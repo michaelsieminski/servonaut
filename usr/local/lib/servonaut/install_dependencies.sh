@@ -9,7 +9,7 @@ install_dependencies() {
     fi
     sleep 1
 
-    echo -e "\n🚀 Installing Bun...\n"
+    echo -e "🚀 Installing Bun...\n"
     if curl -fsSL https://bun.sh/install | bash; then
         echo -e "\n✅ Bun installed successfully"
         # Add Bun to PATH for the current session

@@ -20,8 +20,8 @@ setup_nuxt() {
         exit 1
     fi
 
-    echo -e "📦 Installing dependencies...\n"
-    $HOME/.bun/bin/bun install
+    echo -e "\n📦 Installing dependencies...\n"
+    timeout 300 $HOME/.bun/bin/bun install --verbose || echo -e "\n⚠️  Bun install timed out after 5 minutes. Please check your network connection and try again."
 
     echo -e "🏗️  Building the Nuxt project...\n"
     $HOME/.bun/bin/bun run build

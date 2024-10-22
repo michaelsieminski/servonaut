@@ -100,6 +100,6 @@ EOF
         return 1
     fi
 
-    echo -e "\n✅ Caddy Server is now set up.\n"
+    echo -e "\n✅ Caddy Server is now set up."
     sleep 1
 }
