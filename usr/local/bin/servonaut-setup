@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source /usr/local/lib/servonaut/utils.sh
+source /usr/local/lib/servonaut/install_dependencies.sh
+source /usr/local/lib/servonaut/setup_caddy.sh
+source /usr/local/lib/servonaut/setup_nuxt.sh
+
+clear
+
+# Ensure root privileges for the script to work
+check_root
+
+echo -e "\n🔄 Updating system packages...\n"
+sleep 1
+update_system
+
+echo -e "\n📦 Installing dependencies...\n"
+sleep 1
+install_dependencies
+
+echo -e "\n🚀 Setting up Caddy web server...\n"
+sleep 1
+setup_caddy
+
+echo -e "\n🛠️  Setting up Nuxt project...\n"
+sleep 1
+setup_nuxt
+
+echo -e "\n🔄 Reloading systemd and restarting Nuxt service...\n"
+sleep 1
+systemctl daemon-reload
+systemctl restart nuxt.service
+
+echo -e "\n✅ Setup complete!\n"
+sleep 1
+echo -e "You can now access your Nuxt application at https://$domain_name\n"
+echo -e "If you encounter any issues, please check the following logs:"
+echo -e "  - Caddy: journalctl -u caddy.service"
+echo -e "  - Nuxt: journalctl -u nuxt.service\n"
+echo -e "Thank you for using Servonaut! Happy coding! 🎉\n"

@@ -16,7 +16,7 @@ setup_nuxt() {
 
     echo -e "📥 Cloning repository...\n"
     if ! git clone "$repo_url" .; then
-        echo -e "❌ Failed to clone the repository. Please check the URL and your SSH key setup.\n"
+        echo -e "\n❌ Failed to clone the repository. Please check the URL and your SSH key setup.\n"
         exit 1
     fi
 
@@ -43,7 +43,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-    echo -e "🚀 Enabling and starting Nuxt service...\n"
+    echo -e "\n🚀 Enabling and starting Nuxt service...\n"
     systemctl enable nuxt.service
     systemctl start nuxt.service
 }

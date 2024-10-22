@@ -9,9 +9,9 @@ check_root() {
 
 update_system() {
     if apt update && apt upgrade -y; then
-        echo -e "✅ System packages updated successfully\n"
+        echo -e "\n✅ System packages updated successfully\n"
     else
-        echo -e "⚠️  Some issues occurred during system update\n"
+        echo -e "\n⚠️  Some issues occurred during system update\n"
     fi
     sleep 1
 }
@@ -26,9 +26,9 @@ setup_ssh_key() {
     read -p "Press Enter when you have added the key to continue..."
     echo -e "\n"
 
-    echo -e "🔒 Adding GitHub to known hosts...\n"
+    echo -e "\n🔒 Adding GitHub to known hosts...\n"
     ssh-keyscan github.com >>/root/.ssh/known_hosts
-    echo -e "✅ SSH key setup completed\n"
+    echo -e "\n✅ SSH key setup completed\n"
     sleep 1
 }
 
@@ -48,10 +48,10 @@ check_dns() {
     local resolved_ip=$(dig +short $domain)
 
     if [ "$resolved_ip" = "$expected_ip" ]; then
-        echo -e "✅ DNS propagation successful\n"
+        echo -e "\n✅ DNS propagation successful\n"
         return 0
     else
-        echo -e "⚠️  DNS propagation not complete yet\n"
+        echo -e "\n⚠️  DNS propagation not complete yet\n"
         return 1
     fi
     sleep 1

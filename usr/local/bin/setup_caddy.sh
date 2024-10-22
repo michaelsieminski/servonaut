@@ -8,7 +8,7 @@ setup_caddy() {
         echo ""
 
         if [[ ! $domain_name =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-            echo -e "❌ Invalid domain name. Please enter a valid domain.\n"
+            echo -e "\n❌ Invalid domain name. Please enter a valid domain.\n"
             continue
         fi
 
@@ -28,10 +28,10 @@ setup_caddy() {
             echo -e "🔍 Checking DNS propagation... This may take a moment.\n"
             sleep 2
             if check_dns "$domain_name" "$server_ip"; then
-                echo -e "✅ DNS record verified successfully.\n"
+                echo -e "\n✅ DNS record verified successfully.\n"
                 break
             else
-                echo -e "⚠️  The domain does not yet point to the correct IP address."
+                echo -e "\n⚠️  The domain does not yet point to the correct IP address."
                 echo -e "   This could be due to DNS propagation delay.\n"
                 echo -e "   Options:"
                 echo -e "   1. Wait and try again (recommended)"
@@ -43,16 +43,16 @@ setup_caddy() {
                 fi
             fi
         else
-            echo -e "Please add the A record before continuing.\n"
+            echo -e "\nPlease add the A record before continuing.\n"
         fi
     done
 
-    echo -e "🛠️  Setting up Caddy...\n"
+    echo -e "\n🛠️  Setting up Caddy...\n"
     sleep 1
 
     # Download Caddy binary directly
     if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=arm64"; then
-        echo "Failed to download Caddy. Please check your internet connection."
+        echo -e"\nFailed to download Caddy. Please check your internet connection."
         return 1
     fi
 
@@ -82,7 +82,7 @@ EOF
     systemctl daemon-reload
     systemctl enable caddy.service
     if ! systemctl start caddy.service; then
-        echo "Failed to start Caddy service. Check the logs with 'journalctl -u caddy.service'"
+        echo "\nFailed to start Caddy service. Check the logs with 'journalctl -u caddy.service'"
         return 1
     fi
 
@@ -96,10 +96,10 @@ EOF
 
     # Reload Caddy to apply the changes
     if ! systemctl reload caddy.service; then
-        echo "Failed to reload Caddy service. Check the logs with 'journalctl -u caddy.service'"
+        echo "\n Failed to reload Caddy service. Check the logs with 'journalctl -u caddy.service'"
         return 1
     fi
 
-    echo -e "✅ Caddy Server is now set up.\n"
+    echo -e "\n✅ Caddy Server is now set up.\n"
     sleep 1
 }
