@@ -1,0 +1,35 @@
+#!/bin/bash
+
+source /usr/local/lib/servonaut/utils/system.sh
+source /usr/local/lib/servonaut/utils/network.sh
+source /usr/local/lib/servonaut/utils/git.sh
+source /usr/local/lib/servonaut/install_dependencies.sh
+source /usr/local/lib/servonaut/setup_caddy.sh
+source /usr/local/lib/servonaut/setup_nuxt.sh
+
+clear
+
+check_root
+
+echo -e "🔄 Updating Servonaut...\n"
+
+temp_dir=$(mktemp -d)
+
+# Clone the latest version of Servonaut
+if git clone https://github.com/michaelsieminski/servonaut.git "$temp_dir"; then
+    # Copy the updated files to the correct locations
+    cp -R "$temp_dir/usr" /usr/
+
+    # Make sure all scripts are executable
+    chmod +x /usr/local/bin/servonaut*
+    chmod +x /usr/local/lib/servonaut/*.sh
+    chmod +x /usr/local/lib/servonaut/utils/*.sh
+
+    echo -e "\n✅ Servonaut has been successfully updated to the latest version."
+else
+    echo -e "\n❌ Failed to update Servonaut. Please check your internet connection and try again."
+    exit 1
+fi
+
+# Clean up the temporary directory
+rm -rf "$temp_dir"
