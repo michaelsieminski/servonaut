@@ -55,3 +55,29 @@ EOF
 
     echo -e "\n✅ fail2ban has been set up successfully to protect against SSH brute-force attacks."
 }
+
+setup_ufw() {
+    echo -e "🛡️ Setting up UFW (Firewall)...\n"
+
+    # Install UFW if not already installed
+    apt-get install -y ufw
+
+    # Reset UFW to default settings
+    ufw --force reset
+
+    # Set default policies
+    ufw default deny incoming
+    ufw default allow outgoing
+
+    # Allow SSH (port 22)
+    ufw allow ssh
+
+    # Allow HTTP (port 80) and HTTPS (port 443) for web traffic
+    ufw allow http
+    ufw allow https
+
+    # Enable UFW
+    echo "y" | ufw enable
+
+    echo -e "\n✅ UFW has been set up successfully with basic rules."
+}
