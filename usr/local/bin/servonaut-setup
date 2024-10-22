@@ -28,7 +28,7 @@ echo -e "\n🛠️  Setting up Nuxt project...\n"
 sleep 1
 setup_nuxt
 
-echo -e "\n🔄 Reloading systemd and restarting Nuxt service...\n"
+echo -e "\n🔄 Reloading systemd and restarting Nuxt service..."
 sleep 1
 systemctl daemon-reload
 systemctl restart nuxt.service

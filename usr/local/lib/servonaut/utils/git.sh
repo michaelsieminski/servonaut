@@ -8,9 +8,9 @@ setup_ssh_key() {
     cat /root/.ssh/id_ed25519.pub
     echo -e "\n"
     read -p "Press Enter when you have added the key to continue..."
-    echo -e "\n"
+    echo -e ""
 
-    echo -e "\n🔒 Adding GitHub to known hosts...\n"
+    echo -e "🔒 Adding GitHub to known hosts...\n"
     ssh-keyscan github.com >>/root/.ssh/known_hosts
     echo -e "\n✅ SSH key setup completed\n"
     sleep 1

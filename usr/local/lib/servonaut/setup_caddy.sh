@@ -28,7 +28,7 @@ setup_caddy() {
             echo -e "🔍 Checking DNS propagation... This may take a moment.\n"
             sleep 2
             if check_dns "$domain_name" "$server_ip"; then
-                echo -e "\n✅ DNS record verified successfully.\n"
+                echo -e "\n✅ DNS record verified successfully."
                 break
             else
                 echo -e "\n⚠️  The domain does not yet point to the correct IP address."

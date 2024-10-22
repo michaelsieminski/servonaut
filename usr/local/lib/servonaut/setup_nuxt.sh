@@ -23,10 +23,10 @@ setup_nuxt() {
     echo -e "\n📦 Installing dependencies...\n"
     timeout 300 $HOME/.bun/bin/bun install --verbose || echo -e "\n⚠️  Bun install timed out after 5 minutes. Please check your network connection and try again."
 
-    echo -e "🏗️  Building the Nuxt project...\n"
+    echo -e "\n🏗️  Building the Nuxt project...\n"
     $HOME/.bun/bin/bun run build
 
-    echo -e "🔧 Creating systemd service for Nuxt...\n"
+    echo -e "\n🔧 Creating systemd service for Nuxt..."
     cat >/etc/systemd/system/nuxt.service <<EOF
 [Unit]
 Description=Nuxt Application
@@ -43,7 +43,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-    echo -e "\n🚀 Enabling and starting Nuxt service...\n"
+    echo -e "\n🚀 Enabling and starting Nuxt service..."
     systemctl enable nuxt.service
     systemctl start nuxt.service
 }
