@@ -1,5 +1,38 @@
 #!/bin/bash
 
+setup_servonaut_user() {
+    if id "servonaut" &>/dev/null; then
+        echo -e "\n✅ User 'servonaut' already exists. Skipping user creation."
+    else
+        # Generate a random password
+        password=$(openssl rand -base64 12)
+
+        # Create the new user
+        useradd -m -s /bin/bash servonaut
+
+        # Set the password for the new user
+        echo "servonaut:$password" | chpasswd
+
+        # Add user to sudo group
+        usermod -aG sudo servonaut
+
+        # Create .ssh directory for the new user
+        mkdir -p /home/servonaut/.ssh
+        cp /root/.ssh/authorized_keys /home/servonaut/.ssh/authorized_keys
+        chown -R servonaut:servonaut /home/servonaut/.ssh
+        chmod 700 /home/servonaut/.ssh
+        chmod 600 /home/servonaut/.ssh/authorized_keys
+
+        echo -e "\n✅ Non-root user 'servonaut' has been created successfully."
+        echo -e "📝 Please note down the following credentials:"
+        echo -e "   Username: servonaut"
+        echo -e "   Password: $password"
+        echo -e "\nIt's recommended to disable the root account and use a sudo user instead."
+
+        read -p "Press Enter if you have noted down the credentials"
+    fi
+}
+
 setup_automatic_security_updates() {
     echo -e "🛡️  Setting up automatic security updates...\n"
 

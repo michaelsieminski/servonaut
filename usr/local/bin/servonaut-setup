@@ -20,6 +20,10 @@ echo -e "\n📦 Installing dependencies...\n"
 sleep 1
 install_dependencies
 
+echo -e "\n👤 Setting up servonaut user...\n"
+sleep 1
+setup_servonaut_user
+
 echo -e "\n🛡️  Hardening the server...\n"
 sleep 1
 setup_automatic_security_updates

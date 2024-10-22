@@ -3,6 +3,7 @@
 setup_nuxt() {
     echo -e "📁 Setting up Nuxt project directory\n"
     mkdir -p /var/www/app
+    chown servonaut:servonaut /var/www/app
     cd /var/www/app
 
     echo -e "🔗 GitHub Repository Configuration\n"
@@ -20,6 +21,8 @@ setup_nuxt() {
         exit 1
     fi
 
+    chown -R servonaut:servonaut /var/www/app
+
     echo -e "\n📦 Installing dependencies...\n"
     timeout 300 $HOME/.bun/bin/bun install --verbose || echo -e "\n⚠️  Bun install timed out after 5 minutes. Please check your network connection and try again."
 
@@ -34,7 +37,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=root
+User=servonaut
 WorkingDirectory=/var/www/app
 ExecStart=$HOME/.bun/bin/bun run start
 Restart=on-failure

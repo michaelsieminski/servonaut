@@ -66,6 +66,7 @@ Description=Caddy Web Server
 After=network.target
 
 [Service]
+User=servonaut
 ExecStart=/usr/local/bin/caddy run --config /etc/caddy/Caddyfile
 ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile
 TimeoutStopSec=5s
@@ -93,6 +94,9 @@ $domain_name {
     reverse_proxy localhost:3000
 }
 EOF
+    chown -R servonaut:servonaut /etc/caddy
+    chmod 755 /etc/caddy
+    chmod 644 /etc/caddy/Caddyfile
 
     # Reload Caddy to apply the changes
     if ! systemctl reload caddy.service; then
