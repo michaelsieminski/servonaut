@@ -89,7 +89,7 @@ EOF
     # Configure Caddy as a reverse proxy
     mkdir -p /etc/caddy
     cat >/etc/caddy/Caddyfile <<EOF
-http://$domain_name {
+$domain_name {
     reverse_proxy localhost:3000
 }
 EOF
