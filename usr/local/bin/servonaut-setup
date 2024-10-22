@@ -48,17 +48,17 @@ setup_ufw || {
     exit 1
 }
 
-echo -e "\n🚀 Setting up Caddy web server...\n"
-sleep 1
-setup_caddy || {
-    echo -e "\n❌ Failed to set up Caddy web server. Exiting."
-    exit 1
-}
-
 echo -e "\n🛠️  Setting up Nuxt project...\n"
 sleep 1
 setup_nuxt || {
     echo -e "\n❌ Failed to set up Nuxt project. Exiting."
+    exit 1
+}
+
+echo -e "\n🚀 Setting up Caddy web server...\n"
+sleep 1
+setup_caddy || {
+    echo -e "\n❌ Failed to set up Caddy web server. Exiting."
     exit 1
 }
 

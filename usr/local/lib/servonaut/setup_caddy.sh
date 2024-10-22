@@ -92,8 +92,21 @@ EOF
         return 1
     fi
 
-    # Read the webhook path
-    webhook_path=$(cat /home/servonaut/.webhook_path)
+    # Read the webhook path if it exists
+    if [ -f /home/servonaut/.webhook_path ]; then
+        webhook_path=$(cat /home/servonaut/.webhook_path)
+        webhook_config="
+    @webhook {
+        path $webhook_path
+        method POST
+    }
+    handle @webhook {
+        exec /usr/local/lib/servonaut/auto_deploy.sh {body} {header.X-Hub-Signature}
+    }
+    "
+    else
+        webhook_config=""
+    fi
 
     # Configure Caddy
     mkdir -p /etc/caddy
@@ -103,17 +116,12 @@ $domain_name {
     encode gzip
     file_server
 
-    @webhook {
-        path $webhook_path
-        method POST
-    }
-    handle @webhook {
-        exec /usr/local/lib/servonaut/auto_deploy.sh {body} {header.X-Hub-Signature}
-    }
+    $webhook_config
 
     reverse_proxy localhost:3000
 }
 EOF
+
     chown -R servonaut:servonaut /etc/caddy
     chmod 755 /etc/caddy
     chmod 644 /etc/caddy/Caddyfile
