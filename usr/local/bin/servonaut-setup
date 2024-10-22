@@ -10,43 +10,68 @@ source /usr/local/lib/servonaut/security.sh
 
 clear
 
-check_root
+check_root || exit 1
 
 echo -e "\n🔄 Updating system packages...\n"
 sleep 1
-update_system
+update_system || {
+    echo -e "\n❌ Failed to update system packages. Exiting."
+    exit 1
+}
 
 echo -e "\n📦 Installing dependencies...\n"
 sleep 1
-install_dependencies
+install_dependencies || {
+    echo -e "\n❌ Failed to install dependencies. Exiting."
+    exit 1
+}
 
 echo -e "\n👤 Setting up servonaut user...\n"
 sleep 1
-setup_servonaut_user
+setup_servonaut_user || {
+    echo -e "\n❌ Failed to set up servonaut user. Exiting."
+    exit 1
+}
 
 echo -e "\n🛡️  Hardening the server...\n"
 sleep 1
-setup_automatic_security_updates
-setup_fail2ban
-setup_ufw
+setup_automatic_security_updates || {
+    echo -e "\n❌ Failed to set up automatic security updates. Exiting."
+    exit 1
+}
+setup_fail2ban || {
+    echo -e "\n❌ Failed to set up fail2ban. Exiting."
+    exit 1
+}
+setup_ufw || {
+    echo -e "\n❌ Failed to set up UFW. Exiting."
+    exit 1
+}
 
 echo -e "\n🚀 Setting up Caddy web server...\n"
 sleep 1
-setup_caddy
+setup_caddy || {
+    echo -e "\n❌ Failed to set up Caddy web server. Exiting."
+    exit 1
+}
 
 echo -e "\n🛠️  Setting up Nuxt project...\n"
 sleep 1
-setup_nuxt
+setup_nuxt || {
+    echo -e "\n❌ Failed to set up Nuxt project. Exiting."
+    exit 1
+}
 
 echo -e "\n🔄 Reloading systemd and restarting Nuxt service..."
 sleep 1
 systemctl daemon-reload
-systemctl restart nuxt.service
+systemctl restart nuxt.service || {
+    echo -e "\n❌ Failed to restart Nuxt service. Exiting."
+    exit 1
+}
 
 echo -e "\n✅ Setup complete!\n"
 sleep 1
 echo -e "You can now access your Nuxt application at https://$domain_name\n"
-echo -e "If you encounter any issues, please check the following logs:"
-echo -e "  - Caddy: journalctl -u caddy.service"
-echo -e "  - Nuxt: journalctl -u nuxt.service\n"
-echo -e "Thank you for using Servonaut! Happy coding! 🎉\n"
+echo -e "If you liked Servonaut, please give us a star on GitHub: https://github.com/michaelsieminski/servonaut\n"
+echo -e "Thank you and happy coding! 🎉\n"

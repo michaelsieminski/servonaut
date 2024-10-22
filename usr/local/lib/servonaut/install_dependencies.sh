@@ -13,12 +13,12 @@ install_dependencies() {
     if curl -fsSL https://bun.sh/install | bash; then
         echo -e "\n✅ Bun installed successfully"
         # Add Bun to PATH for the current session
-        export BUN_INSTALL="$HOME/.bun"
-        export PATH="$BUN_INSTALL/bin:$PATH"
+        export BUN_INSTALL="/root/.bun"
+        export PATH="/root/.bun/bin:$PATH"
         # Add Bun to PATH permanently
-        echo 'export BUN_INSTALL="$HOME/.bun"' >>$HOME/.bashrc
-        echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >>$HOME/.bashrc
-        source $HOME/.bashrc
+        echo 'export BUN_INSTALL="/root/.bun"' >>/root/.bashrc
+        echo 'export PATH="/root/.bun/bin:$PATH"' >>/root/.bashrc
+        source /root/.bashrc
     else
         echo -e "\n❌ Failed to install Bun\n"
         return 1

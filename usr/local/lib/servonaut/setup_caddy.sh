@@ -47,6 +47,11 @@ setup_caddy() {
         fi
     done
 
+    # Store domain name for later use
+    echo "$domain_name" >/home/servonaut/.domain_name
+    chmod 600 /home/servonaut/.domain_name
+    chown servonaut:servonaut /home/servonaut/.domain_name
+
     echo -e "\n🛠️  Setting up Caddy...\n"
     sleep 1
 
@@ -87,10 +92,25 @@ EOF
         return 1
     fi
 
-    # Configure Caddy as a reverse proxy
+    # Read the webhook path
+    webhook_path=$(cat /home/servonaut/.webhook_path)
+
+    # Configure Caddy
     mkdir -p /etc/caddy
     cat >/etc/caddy/Caddyfile <<EOF
 $domain_name {
+    root * /var/www/app/.output/public
+    encode gzip
+    file_server
+
+    @webhook {
+        path $webhook_path
+        method POST
+    }
+    handle @webhook {
+        exec /usr/local/lib/servonaut/auto_deploy.sh {body} {header.X-Hub-Signature}
+    }
+
     reverse_proxy localhost:3000
 }
 EOF
@@ -105,5 +125,5 @@ EOF
     fi
 
     echo -e "\n✅ Caddy Server is now set up."
-    sleep 1
+    return 0
 }

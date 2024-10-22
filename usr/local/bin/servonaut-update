@@ -31,3 +31,4 @@ fi
 rm -rf "$temp_dir"
 
 echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
+return 0

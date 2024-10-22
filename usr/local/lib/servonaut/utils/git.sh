@@ -1,17 +1,105 @@
 #!/bin/bash
 
-setup_ssh_key() {
-    echo -e "🔑 Generating SSH key for GitHub...\n"
-    ssh-keygen -t ed25519 -C "servonaut@deployment" -f /root/.ssh/id_ed25519 -N ""
+setup_github_auth() {
+    echo -e "\n🔑 GitHub Authentication Setup\n"
+    echo "Please provide your GitHub personal access token with 'repo' and 'admin:repo_hook' permissions."
+    echo "You can create a new token at https://github.com/settings/tokens/new"
 
-    echo -e "\n📋 Please add the following public key to your GitHub repository's deploy keys:\n"
-    cat /root/.ssh/id_ed25519.pub
-    echo -e "\n"
-    read -p "Press Enter when you have added the key to continue..."
-    echo -e ""
+    while true; do
+        read -p "Enter your GitHub personal access token: " github_token
 
-    echo -e "🔒 Adding GitHub to known hosts...\n"
-    ssh-keyscan github.com >>/root/.ssh/known_hosts
-    echo -e "\n✅ SSH key setup completed\n"
-    sleep 1
+        # Verify the token
+        response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $github_token" https://api.github.com/user)
+
+        if [ "$response" -eq 200 ]; then
+            echo -e "\n✅ GitHub authentication successful!"
+            break
+        else
+            echo -e "\n❌ GitHub authentication failed. Please check your token and try again."
+        fi
+    done
+
+    # Store the token securely for later use
+    echo "$github_token" >/home/servonaut/.github_token
+    chmod 600 /home/servonaut/.github_token
+    chown servonaut:servonaut /home/servonaut/.github_token
+
+    # Now ask for the repository URL
+    read -p "Enter your GitHub repository SSH URL: " repo_url
+
+    # Extract owner and repo from the URL
+    owner=$(echo $repo_url | sed -n 's/.*github.com[:/]\(.*\)\/\(.*\)\.git/\1/p')
+    repo=$(echo $repo_url | sed -n 's/.*github.com[:/]\(.*\)\/\(.*\)\.git/\2/p')
+
+    # Generate deploy key
+    ssh-keygen -t ed25519 -C "servonaut@deployment" -f /home/servonaut/.ssh/id_ed25519 -N ""
+    public_key=$(cat /home/servonaut/.ssh/id_ed25519.pub)
+
+    # Add deploy key to the repository
+    response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+        -H "Authorization: token $github_token" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/$owner/$repo/keys \
+        -d '{
+            "title": "Servonaut Deploy Key",
+            "key": "'$public_key'",
+            "read_only": false
+        }')
+
+    if [ "$response" -eq 201 ]; then
+        echo -e "\n✅ Deploy key added successfully to the repository!"
+    else
+        echo -e "\n❌ Failed to add deploy key to the repository. Please add it manually:"
+        echo "$public_key"
+        return 1
+    fi
+
+    # Store repo URL for later use
+    echo "$repo_url" >/home/servonaut/.repo_url
+    chmod 600 /home/servonaut/.repo_url
+    chown servonaut:servonaut /home/servonaut/.repo_url
+
+    echo -e "\n✅ GitHub authentication and repository setup completed successfully!"
+}
+
+setup_github_webhook() {
+    local domain_name=$1
+    echo -e "\n📡 Setting up GitHub Webhook\n"
+
+    # Generate a secure random token for the webhook
+    webhook_token=$(openssl rand -hex 20)
+    webhook_path="/servonaut-webhook-$(openssl rand -hex 8)"
+
+    repo_url=$(cat /home/servonaut/.repo_url)
+    owner=$(echo $repo_url | sed -n 's/.*:\(.*\)\/.*/\1/p')
+    repo=$(echo $repo_url | sed -n 's/.*\/\(.*\)\.git/\1/p')
+    github_token=$(cat /home/servonaut/.github_token)
+
+    response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+        -H "Authorization: token $github_token" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/$owner/$repo/hooks \
+        -d '{
+            "name": "web",
+            "active": true,
+            "events": ["push"],
+            "config": {
+                "url": "https://'$domain_name$webhook_path'",
+                "content_type": "json",
+                "secret": "'$webhook_token'"
+            }
+        }')
+
+    if [ "$response" -eq 201 ]; then
+        echo -e "\n✅ GitHub webhook created successfully!"
+        # Save webhook information for later use
+        echo "$webhook_path" >/home/servonaut/.webhook_path
+        echo "$webhook_token" >/home/servonaut/.webhook_token
+        chmod 600 /home/servonaut/.webhook_path /home/servonaut/.webhook_token
+        chown servonaut:servonaut /home/servonaut/.webhook_path /home/servonaut/.webhook_token
+        return 0
+    else
+        echo -e "\n❌ Failed to create GitHub webhook. Please check your token and try again."
+        return 1
+    fi
 }
