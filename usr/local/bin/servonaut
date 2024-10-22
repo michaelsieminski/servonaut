@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Display Servonaut ASCII logo
-cat <<"EOF"
+# Function to display the help message
+show_help() {
+      cat <<"EOF"
 --------                                                                                  
 @@@@@@@@.                                                                            
 @@@@@@@@.      sssss   eeeeee  rrrrrr   v   v   ooooo   n   nn  aaaaaa  u   uu  ttttt
@@ -11,14 +12,38 @@ cat <<"EOF"
 @#    +@.     sssss    eeeeee rr   rr    v     ooooo   nn  nn  aa   aa  uuuuu    tt
 @#....+@.                                                                                  
 ********                                                                                 
-                              
 EOF
 
-echo -e "\nWelcome to Servonaut - Your one-click Nuxt deployment solution!\n"
+      echo -e "\nWelcome to Servonaut - Your one-click Nuxt deployment solution!\n"
 
-echo "Available commands:"
-echo "  servonaut setup     - Set up a new Nuxt deployment"
-echo "  servonaut update    - Update Servonaut to the latest version"
-echo "  servonaut uninstall - Uninstall Servonaut and remove all configurations"
+      echo "Available commands:"
+      echo "  servonaut setup     - Set up a new Nuxt deployment"
+      echo "  servonaut update    - Update Servonaut to the latest version"
+      echo "  servonaut uninstall - Uninstall Servonaut and remove all configurations"
 
-echo -e "\nFor more information, visit: https://github.com/michaelsieminski/servonaut"
+      echo -e "\nFor more information, visit: https://github.com/michaelsieminski/servonaut"
+}
+
+# Check if a subcommand was provided
+if [ $# -eq 0 ]; then
+      show_help
+      exit 0
+fi
+
+# Handle subcommands
+case "$1" in
+setup)
+      /usr/local/bin/servonaut-setup
+      ;;
+update)
+      /usr/local/bin/servonaut-update
+      ;;
+uninstall)
+      /usr/local/bin/servonaut-uninstall
+      ;;
+*)
+      echo "Unknown command: $1"
+      show_help
+      exit 1
+      ;;
+esac
