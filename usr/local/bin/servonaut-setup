@@ -20,9 +20,10 @@ echo -e "\n📦 Installing dependencies...\n"
 sleep 1
 install_dependencies
 
-echo -e "\n🛡️ Hardening the server...\n"
+echo -e "\n🛡️  Hardening the server...\n"
 sleep 1
 setup_automatic_security_updates
+setup_fail2ban
 
 echo -e "\n🚀 Setting up Caddy web server...\n"
 sleep 1

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 setup_automatic_security_updates() {
-    echo -e "🛡️ Setting up automatic security updates...\n"
+    echo -e "🛡️  Setting up automatic security updates...\n"
 
     # Install unattended-upgrades package
     apt-get install -y unattended-upgrades
@@ -29,5 +29,29 @@ APT::Periodic::Download-Upgradeable-Packages "1";
 APT::Periodic::AutocleanInterval "7";
 APT::Periodic::Unattended-Upgrade "1";' >/etc/apt/apt.conf.d/20auto-upgrades
 
-    echo -e "✅ Automatic security updates have been set up successfully.\n"
+    echo -e "\n✅ Automatic security updates have been set up successfully."
+}
+
+setup_fail2ban() {
+    echo -e "🛡️  Setting up fail2ban to protect against brute-force attacks...\n"
+
+    # Install fail2ban
+    apt-get install -y fail2ban
+
+    # Create a custom jail for SSH
+    cat >/etc/fail2ban/jail.local <<EOF
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 5
+bantime = 3600
+findtime = 600
+EOF
+
+    # Restart fail2ban to apply changes
+    systemctl restart fail2ban
+
+    echo -e "\n✅ fail2ban has been set up successfully to protect against SSH brute-force attacks."
 }
