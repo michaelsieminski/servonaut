@@ -1,11 +1,6 @@
 #!/bin/bash
 
 source /usr/local/lib/servonaut/utils/system.sh
-source /usr/local/lib/servonaut/utils/network.sh
-source /usr/local/lib/servonaut/utils/git.sh
-source /usr/local/lib/servonaut/install_dependencies.sh
-source /usr/local/lib/servonaut/setup_caddy.sh
-source /usr/local/lib/servonaut/setup_nuxt.sh
 
 clear
 
@@ -18,7 +13,8 @@ temp_dir=$(mktemp -d)
 # Clone the latest version of Servonaut
 if git clone https://github.com/michaelsieminski/servonaut.git "$temp_dir"; then
     # Copy the updated files to the correct locations
-    cp -R "$temp_dir/usr" /usr/
+    cp -R "$temp_dir/usr/local/bin/"* /usr/local/bin/
+    cp -R "$temp_dir/usr/local/lib/servonaut/"* /usr/local/lib/servonaut/
 
     # Make sure all scripts are executable
     chmod +x /usr/local/bin/servonaut*
@@ -33,3 +29,5 @@ fi
 
 # Clean up the temporary directory
 rm -rf "$temp_dir"
+
+echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
