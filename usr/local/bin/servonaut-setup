@@ -24,6 +24,7 @@ echo -e "\n🛡️  Hardening the server...\n"
 sleep 1
 setup_automatic_security_updates
 setup_fail2ban
+setup_ufw
 
 echo -e "\n🚀 Setting up Caddy web server...\n"
 sleep 1
