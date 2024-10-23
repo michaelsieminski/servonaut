@@ -2,14 +2,16 @@
 
 setup_github_auth() {
     echo -e "\n🔑 GitHub Authentication Setup\n"
-    echo "Please provide your GitHub personal access token with 'repo', 'admin:repo_hook' and 'admin:public_key' permissions."
-    echo "You can create a new token at https://github.com/settings/tokens/new"
+    echo "Please provide your GitHub fine-grained personal access token with the following permissions:"
+    echo "- 'Administration' repository permission (write)"
+    echo "- 'Webhooks' repository permission (write)"
+    echo "You can create a new fine-grained token at https://github.com/settings/tokens?type=beta"
 
     while true; do
-        read -p "Enter your GitHub personal access token: " github_token
+        read -p "Enter your GitHub fine-grained personal access token: " github_token
 
         # Verify the token
-        response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $github_token" https://api.github.com/user)
+        response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $github_token" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/user)
 
         if [ "$response" -eq 200 ]; then
             echo -e "\n✅ GitHub authentication successful!"
@@ -44,8 +46,9 @@ setup_github_auth() {
 
         # Add deploy key to the repository
         response=$(curl -s -w "%{http_code}" -X POST \
-            -H "Authorization: token $github_token" \
-            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer $github_token" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/$owner/$repo/keys \
             -d '{
                 "title": "Servonaut Deploy Key",
@@ -85,8 +88,9 @@ setup_github_webhook() {
     github_token=$(cat /home/servonaut/.github_token)
 
     response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
-        -H "Authorization: token $github_token" \
-        -H "Accept: application/vnd.github.v3+json" \
+        -H "Authorization: Bearer $github_token" \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/$owner/$repo/hooks \
         -d '{
             "name": "web",
