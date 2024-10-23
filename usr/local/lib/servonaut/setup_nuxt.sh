@@ -3,8 +3,14 @@
 setup_nuxt() {
     echo -e "📁 Setting up Nuxt project directory\n"
     mkdir -p /var/www/app
-    chown servonaut:servonaut /var/www/app
+    chown -R servonaut:servonaut /var/www/app
+    chmod -R 755 /var/www/app
     cd /var/www/app
+
+    # Set up temporary directories with proper permissions
+    mkdir -p /tmp/servonaut
+    chown -R servonaut:servonaut /tmp/servonaut
+    chmod -R 755 /tmp/servonaut
 
     setup_github_auth
     repo_url=$(cat /home/servonaut/.repo_url)
@@ -15,13 +21,15 @@ setup_nuxt() {
         exit 1
     fi
 
-    chown -R servonaut:servonaut /var/www/app
-
     echo -e "\n📦 Installing dependencies...\n"
-    sudo -u servonaut bash -c 'cd /var/www/app && /home/servonaut/.bun/bin/bun install'
+    sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut /home/servonaut/.bun/bin/bun install'
 
     echo -e "\n🏗️  Building the Nuxt project...\n"
-    sudo -u servonaut bash -c 'cd /var/www/app && /home/servonaut/.bun/bin/bun run build'
+    sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut /home/servonaut/.bun/bin/bun run build'
+
+    # Ensure permissions are maintained after build
+    chown -R servonaut:servonaut /var/www/app
+    chmod -R 755 /var/www/app
 
     echo -e "\n🔧 Creating systemd service for Nuxt..."
     cat >/etc/systemd/system/nuxt.service <<EOF
