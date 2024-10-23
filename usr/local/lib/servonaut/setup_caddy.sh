@@ -12,6 +12,11 @@ setup_caddy() {
             continue
         fi
 
+        # Store domain name for later use
+        echo "$domain_name" >/home/servonaut/.domain_name
+        chmod 600 /home/servonaut/.domain_name
+        chown servonaut:servonaut /home/servonaut/.domain_name
+
         server_ip=$(get_server_ip)
 
         echo -e "Please create the following A record for your domain:\n"
@@ -46,11 +51,6 @@ setup_caddy() {
             echo -e "\nPlease add the A record before continuing.\n"
         fi
     done
-
-    # Store domain name for later use
-    echo "$domain_name" >/home/servonaut/.domain_name
-    chmod 600 /home/servonaut/.domain_name
-    chown servonaut:servonaut /home/servonaut/.domain_name
 
     echo -e "\n🛠️  Setting up Caddy...\n"
     sleep 1
