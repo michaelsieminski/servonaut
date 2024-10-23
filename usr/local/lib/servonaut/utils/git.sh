@@ -49,18 +49,23 @@ setup_github_auth() {
         ssh-keygen -t ed25519 -C "servonaut@deployment" -f /home/servonaut/.ssh/id_ed25519 -N ""
         public_key=$(cat /home/servonaut/.ssh/id_ed25519.pub)
 
+        # Remove any newlines from the public key
+        public_key=$(echo "$public_key" | tr -d '\n')
+
         # Add deploy key to the repository
         echo "Adding deploy key to the repository..."
+        echo "Debug: Public key format:"
+        echo "$public_key"
         response=$(curl -s -w "\n%{http_code}" -X POST \
             -H "Authorization: Bearer $github_token" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/$owner/$repo/keys \
             -d '{
-                "title": "Servonaut Deploy Key",
-                "key": "'$public_key'",
-                "read_only": false
-            }')
+        "title": "Servonaut Deploy Key",
+        "key": "'"$public_key"'",
+        "read_only": false
+    }')
         http_code=$(echo "$response" | tail -n1)
         response_body=$(echo "$response" | sed '$d')
 
