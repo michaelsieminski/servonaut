@@ -1,7 +1,7 @@
 #!/bin/bash
 
 install_dependencies() {
-    if apt install -y curl unzip git; then
+    if apt install -y curl unzip git socat; then
         echo -e "\n✅ Required packages installed successfully\n"
     else
         echo -e "\n⚠️  Some issues occurred during package installation\n"

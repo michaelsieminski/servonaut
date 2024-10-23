@@ -47,9 +47,8 @@ EOF
     if [ -f /home/servonaut/.webhook_path ]; then
         webhook_path=$(cat /home/servonaut/.webhook_path)
         webhook_config="
-    route $webhook_path {
-        method POST
-        exec /usr/local/lib/servonaut/auto_deploy.sh {http.request.body} {http.request.header.X-Hub-Signature}
+    handle $webhook_path {
+        reverse_proxy unix//run/webhook/webhook.sock
     }
     "
     else
@@ -73,6 +72,28 @@ EOF
     chown -R servonaut:servonaut /etc/caddy
     chmod 755 /etc/caddy
     chmod 644 /etc/caddy/Caddyfile
+
+    # Create webhook service
+    cat >/etc/systemd/system/webhook.service <<EOF
+[Unit]
+Description=GitHub Webhook Handler
+After=network.target
+
+[Service]
+Type=simple
+User=servonaut
+ExecStart=/usr/local/lib/servonaut/webhook_server.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # Make webhook server executable and start service
+    chmod +x /usr/local/lib/servonaut/webhook_server.sh
+    systemctl daemon-reload
+    systemctl enable webhook.service
+    systemctl start webhook.service
 
     # Reload Caddy to apply the changes
     if ! systemctl reload caddy.service; then
