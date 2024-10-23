@@ -25,7 +25,7 @@ setup_nuxt() {
     sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut /home/servonaut/.bun/bin/bun install'
 
     echo -e "\n🏗️  Building the Nuxt project...\n"
-    sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut /home/servonaut/.bun/bin/bun run build'
+    sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build || true'
 
     # Ensure permissions are maintained after build
     chown -R servonaut:servonaut /var/www/app
@@ -41,6 +41,8 @@ After=network.target
 Type=simple
 User=servonaut
 WorkingDirectory=/var/www/app
+Environment="PATH=/home/servonaut/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="BUN_INSTALL=/home/servonaut/.bun"
 ExecStart=/home/servonaut/.bun/bin/bun run start
 Restart=on-failure
 

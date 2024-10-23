@@ -19,7 +19,7 @@ sudo -u servonaut git pull origin main
 sudo -u servonaut /home/servonaut/.bun/bin/bun install
 
 # Build the Nuxt project
-sudo -u servonaut /home/servonaut/.bun/bin/bun run build
+sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build || true'
 
 # Restart the Nuxt service
 systemctl restart nuxt.service
