@@ -75,10 +75,10 @@ EOF
 
     # Create webhook directory with proper permissions
     mkdir -p /run/webhook
-    chown servonaut:servonaut /run/webhook
-    chmod 755 /run/webhook
+    chown root:servonaut /run/webhook
+    chmod 775 /run/webhook
 
-    # Create webhook service
+    ## Create webhook service
     cat >/etc/systemd/system/webhook.service <<EOF
 [Unit]
 Description=GitHub Webhook Handler
@@ -88,8 +88,13 @@ After=network.target
 Type=simple
 User=servonaut
 WorkingDirectory=/var/www/app
+ExecStartPre=/bin/mkdir -p /run/webhook
+ExecStartPre=/bin/chown servonaut:servonaut /run/webhook
+ExecStartPre=/bin/chmod 755 /run/webhook
 ExecStart=/usr/local/lib/servonaut/webhook_server.sh
 Restart=on-failure
+RuntimeDirectory=webhook
+RuntimeDirectoryMode=0755
 
 [Install]
 WantedBy=multi-user.target
