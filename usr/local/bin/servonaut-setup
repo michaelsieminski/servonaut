@@ -3,6 +3,8 @@
 source /usr/local/lib/servonaut/utils/system.sh
 source /usr/local/lib/servonaut/utils/network.sh
 source /usr/local/lib/servonaut/utils/git.sh
+source /usr/local/lib/servonaut/utils/domain.sh
+
 source /usr/local/lib/servonaut/install_dependencies.sh
 source /usr/local/lib/servonaut/setup_caddy.sh
 source /usr/local/lib/servonaut/setup_nuxt.sh
@@ -45,6 +47,13 @@ setup_fail2ban || {
 }
 setup_ufw || {
     echo -e "\n❌ Failed to set up UFW. Exiting."
+    exit 1
+}
+
+echo -e "\n📝 Setting up domain...\n"
+sleep 1
+setup_domain || {
+    echo -e "\n❌ Failed to set up domain. Exiting."
     exit 1
 }
 
