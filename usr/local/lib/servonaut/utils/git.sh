@@ -11,13 +11,18 @@ setup_github_auth() {
         read -p "Enter your GitHub fine-grained personal access token: " github_token
 
         # Verify the token
-        response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $github_token" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/user)
+        echo "Verifying token..."
+        response=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer $github_token" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/user)
+        http_code=$(echo "$response" | tail -n1)
+        response_body=$(echo "$response" | sed '$d')
 
-        if [ "$response" -eq 200 ]; then
+        if [ "$http_code" -eq 200 ]; then
             echo -e "\n✅ GitHub authentication successful!"
             break
         else
-            echo -e "\n❌ GitHub authentication failed. Please check your token and try again."
+            echo -e "\n❌ GitHub authentication failed. HTTP Status Code: $http_code"
+            echo "Response body: $response_body"
+            echo "Please check your token and try again."
         fi
     done
 
@@ -45,7 +50,8 @@ setup_github_auth() {
         public_key=$(cat /home/servonaut/.ssh/id_ed25519.pub)
 
         # Add deploy key to the repository
-        response=$(curl -s -w "%{http_code}" -X POST \
+        echo "Adding deploy key to the repository..."
+        response=$(curl -s -w "\n%{http_code}" -X POST \
             -H "Authorization: Bearer $github_token" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -55,12 +61,16 @@ setup_github_auth() {
                 "key": "'$public_key'",
                 "read_only": false
             }')
+        http_code=$(echo "$response" | tail -n1)
+        response_body=$(echo "$response" | sed '$d')
 
-        if [[ "$response" =~ ^2[0-9][0-9]$ ]]; then
+        if [[ "$http_code" =~ ^2[0-9][0-9]$ ]]; then
             echo -e "\n✅ Deploy key added successfully to the repository!"
             break
         else
-            echo -e "\n❌ Failed to add deploy key to the repository. Please check your permissions and try again."
+            echo -e "\n❌ Failed to add deploy key to the repository. HTTP Status Code: $http_code"
+            echo "Response body: $response_body"
+            echo "Please check your permissions and try again."
             echo -e "If the problem persists, you may need to add the deploy key manually:"
             echo "$public_key"
         fi
