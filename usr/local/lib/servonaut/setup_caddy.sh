@@ -48,11 +48,7 @@ EOF
         webhook_path=$(cat /home/servonaut/.webhook_path)
         webhook_config="
     handle $webhook_path {
-        reverse_proxy unix//run/webhook/webhook.sock {
-            transport unix {
-                dial_timeout 60s
-            }
-        }
+        reverse_proxy unix//run/webhook/webhook.sock
     }
     "
     else
