@@ -2,7 +2,7 @@
 
 setup_github_auth() {
     echo -e "\n🔑 GitHub Authentication Setup\n"
-    echo "Please provide your GitHub personal access token with 'repo' and 'admin:repo_hook' permissions."
+    echo "Please provide your GitHub personal access token with 'repo', 'admin:repo_hook' and 'admin:public_key' permissions."
     echo "You can create a new token at https://github.com/settings/tokens/new"
 
     while true; do
@@ -25,34 +25,43 @@ setup_github_auth() {
     chown servonaut:servonaut /home/servonaut/.github_token
 
     # Now ask for the repository URL
-    read -p "Enter your GitHub repository SSH URL: " repo_url
+    while true; do
+        read -p "Enter your GitHub repository SSH URL: " repo_url
 
-    # Extract owner and repo from the URL
-    owner=$(echo $repo_url | sed -n 's/.*github.com[:/]\(.*\)\/\(.*\)\.git/\1/p')
-    repo=$(echo $repo_url | sed -n 's/.*github.com[:/]\(.*\)\/\(.*\)\.git/\2/p')
+        # Validate the repository URL format
+        if [[ ! $repo_url =~ ^git@github\.com:.+/.+\.git$ ]]; then
+            echo -e "\n❌ Invalid repository URL format. Please use the SSH URL (git@github.com:owner/repo.git)."
+            continue
+        fi
 
-    # Generate deploy key
-    ssh-keygen -t ed25519 -C "servonaut@deployment" -f /home/servonaut/.ssh/id_ed25519 -N ""
-    public_key=$(cat /home/servonaut/.ssh/id_ed25519.pub)
+        # Extract owner and repo from the URL
+        owner=$(echo $repo_url | sed -n 's/.*github.com[:/]\(.*\)\/\(.*\)\.git/\1/p')
+        repo=$(echo $repo_url | sed -n 's/.*github.com[:/]\(.*\)\/\(.*\)\.git/\2/p')
 
-    # Add deploy key to the repository
-    response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
-        -H "Authorization: token $github_token" \
-        -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/$owner/$repo/keys \
-        -d '{
-            "title": "Servonaut Deploy Key",
-            "key": "'$public_key'",
-            "read_only": false
-        }')
+        # Generate deploy key
+        ssh-keygen -t ed25519 -C "servonaut@deployment" -f /home/servonaut/.ssh/id_ed25519 -N ""
+        public_key=$(cat /home/servonaut/.ssh/id_ed25519.pub)
 
-    if [ "$response" -eq 201 ]; then
-        echo -e "\n✅ Deploy key added successfully to the repository!"
-    else
-        echo -e "\n❌ Failed to add deploy key to the repository. Please add it manually:"
-        echo "$public_key"
-        return 1
-    fi
+        # Add deploy key to the repository
+        response=$(curl -s -w "%{http_code}" -X POST \
+            -H "Authorization: token $github_token" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/$owner/$repo/keys \
+            -d '{
+                "title": "Servonaut Deploy Key",
+                "key": "'$public_key'",
+                "read_only": false
+            }')
+
+        if [[ "$response" =~ ^2[0-9][0-9]$ ]]; then
+            echo -e "\n✅ Deploy key added successfully to the repository!"
+            break
+        else
+            echo -e "\n❌ Failed to add deploy key to the repository. Please check your permissions and try again."
+            echo -e "If the problem persists, you may need to add the deploy key manually:"
+            echo "$public_key"
+        fi
+    done
 
     # Store repo URL for later use
     echo "$repo_url" >/home/servonaut/.repo_url
