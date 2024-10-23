@@ -87,7 +87,7 @@ After=network.target
 [Service]
 Type=simple
 User=servonaut
-WorkingDirectory=/var/www/app
+WorkingDirectory=/usr/local/lib/servonaut
 ExecStartPre=/bin/mkdir -p /run/webhook
 ExecStartPre=/bin/chown servonaut:servonaut /run/webhook
 ExecStartPre=/bin/chmod 755 /run/webhook

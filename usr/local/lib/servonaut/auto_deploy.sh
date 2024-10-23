@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change to a known directory first
+cd /usr/local/lib/servonaut || exit 1
+
 # Send initial response headers to keep the connection alive
 echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nConnection: close\r\n\r"
 
