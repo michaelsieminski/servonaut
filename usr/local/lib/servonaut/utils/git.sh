@@ -47,6 +47,9 @@ setup_github_auth() {
 
         # Generate deploy key
         ssh-keygen -t ed25519 -C "servonaut@deployment" -f /home/servonaut/.ssh/id_ed25519 -N ""
+        chown servonaut:servonaut /home/servonaut/.ssh/id_ed25519 /home/servonaut/.ssh/id_ed25519.pub
+        chmod 600 /home/servonaut/.ssh/id_ed25519
+        chmod 644 /home/servonaut/.ssh/id_ed25519.pub
         public_key=$(cat /home/servonaut/.ssh/id_ed25519.pub)
 
         # Remove any newlines from the public key

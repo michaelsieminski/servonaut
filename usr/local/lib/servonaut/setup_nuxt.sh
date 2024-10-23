@@ -10,7 +10,7 @@ setup_nuxt() {
     repo_url=$(cat /home/servonaut/.repo_url)
 
     echo -e "📥 Cloning repository...\n"
-    if ! sudo -u servonaut GIT_SSH_COMMAND="ssh -i /home/servonaut/.ssh/id_ed25519 -o StrictHostKeyChecking=no" git clone "$repo_url" .; then
+    if ! sudo -u servonaut bash -c "GIT_SSH_COMMAND='ssh -i /home/servonaut/.ssh/id_ed25519 -o StrictHostKeyChecking=no' git clone '$repo_url' ."; then
         echo -e "\n❌ Failed to clone the repository. Please check the URL and your SSH key setup.\n"
         exit 1
     fi
