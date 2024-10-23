@@ -1,29 +1,30 @@
 #!/bin/bash
 
-# Change to a known directory first
+# Set a known working directory
 cd /usr/local/lib/servonaut || exit 1
 
-# Send initial response headers to keep the connection alive
-echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nConnection: close\r\n\r"
+# Send initial response headers
+printf "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\n"
 
-# Read the headers
+# Read the request line
+read -r request_line
+
+# Read headers into an associative array
 declare -A headers
 while IFS=': ' read -r key value; do
-    # Remove carriage return from value
+    # Remove carriage return and convert to lowercase
     value=${value%$'\r'}
+    key=${key,,}
     # Break on empty line
     [ -z "$key" ] && break
     headers["$key"]="$value"
 done
 
-# Read the body with content length
-content_length="${headers[Content - Length]}"
-if [ -n "$content_length" ]; then
-    body=$(dd bs=1 count=$content_length 2>/dev/null)
-fi
+# Read the body
+body=$(cat)
 
 # Get the signature from headers
-signature="${headers[X - Hub - Signature]}"
+signature="${headers["x-hub-signature"]}"
 if [[ "$signature" =~ ^sha1=(.*)$ ]]; then
     signature="${BASH_REMATCH[1]}"
 fi
@@ -33,25 +34,18 @@ webhook_token=$(cat /home/servonaut/.webhook_token)
 # Verify the webhook signature
 expected_signature=$(echo -n "$body" | openssl sha1 -hmac "$webhook_token" | sed 's/^.* //')
 if [ "$signature" != "$expected_signature" ]; then
-    echo -e "\n❌ Invalid webhook signature\n"
+    printf "Invalid webhook signature\n"
     exit 1
 fi
 
-echo -e "\n🚀 Starting deployment...\n"
+printf "Starting deployment...\n"
 
 # Change to the application directory
 cd /var/www/app || exit 1
 
-# Pull the latest changes from the main branch
+# Execute deployment steps
 sudo -u servonaut git pull origin main
-
-# Install any new dependencies
 sudo -u servonaut /home/servonaut/.bun/bin/bun install
+sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build'
 
-# Build the Nuxt project
-sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build || true'
-
-# Restart the Nuxt service
-systemctl restart nuxt.service
-
-echo -e "\n✅ Deployment completed successfully\n"
+printf "Deployment completed successfully\n"
