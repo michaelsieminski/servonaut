@@ -73,6 +73,11 @@ EOF
     chmod 755 /etc/caddy
     chmod 644 /etc/caddy/Caddyfile
 
+    # Create webhook directory with proper permissions
+    mkdir -p /run/webhook
+    chown servonaut:servonaut /run/webhook
+    chmod 755 /run/webhook
+
     # Create webhook service
     cat >/etc/systemd/system/webhook.service <<EOF
 [Unit]
@@ -89,6 +94,13 @@ Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 EOF
+
+    # Create tmpfiles configuration for webhook socket
+    cat >/etc/tmpfiles.d/webhook.conf <<EOF
+d /run/webhook 0755 servonaut servonaut -
+EOF
+
+    systemd-tmpfiles --create
 
     # Make webhook server executable and start service
     chmod +x /usr/local/lib/servonaut/webhook_server.sh

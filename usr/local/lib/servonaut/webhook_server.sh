@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Ensure the socket directory exists with proper permissions
-mkdir -p /run/webhook
-chown servonaut:servonaut /run/webhook
-chmod 755 /run/webhook
-
 # Create Unix socket with proper error handling
 exec socat \
     UNIX-LISTEN:/run/webhook/webhook.sock,fork,mode=600,user=servonaut \
