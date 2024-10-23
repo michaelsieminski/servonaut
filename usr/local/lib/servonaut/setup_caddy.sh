@@ -82,6 +82,7 @@ After=network.target
 [Service]
 Type=simple
 User=servonaut
+WorkingDirectory=/var/www/app
 ExecStart=/usr/local/lib/servonaut/webhook_server.sh
 Restart=on-failure
 

@@ -5,5 +5,7 @@ mkdir -p /run/webhook
 chown servonaut:servonaut /run/webhook
 chmod 755 /run/webhook
 
-# Create Unix socket
-socat UNIX-LISTEN:/run/webhook/webhook.sock,fork,mode=600,user=servonaut EXEC:/usr/local/lib/servonaut/auto_deploy.sh,pty
+# Create Unix socket with proper error handling
+exec socat \
+    UNIX-LISTEN:/run/webhook/webhook.sock,fork,mode=600,user=servonaut \
+    SYSTEM:"/usr/local/lib/servonaut/auto_deploy.sh",nofork
