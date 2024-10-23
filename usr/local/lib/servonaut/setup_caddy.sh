@@ -47,11 +47,8 @@ EOF
     if [ -f /home/servonaut/.webhook_path ]; then
         webhook_path=$(cat /home/servonaut/.webhook_path)
         webhook_config="
-    @webhook {
-        path $webhook_path
+    handle $webhook_path {
         method POST
-    }
-    handle @webhook {
         exec /usr/local/lib/servonaut/auto_deploy.sh {body} {header.X-Hub-Signature}
     }
     "
