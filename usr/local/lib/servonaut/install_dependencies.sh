@@ -15,6 +15,8 @@ install_dependencies() {
         # Add Bun to PATH for the servonaut user
         sudo -u servonaut bash -c 'echo "export BUN_INSTALL=\"$HOME/.bun\"" >> $HOME/.bashrc'
         sudo -u servonaut bash -c 'echo "export PATH=\"$HOME/.bun/bin:$PATH\"" >> $HOME/.bashrc'
+        # Source the updated .bashrc to make Bun available immediately
+        sudo -u servonaut bash -c 'source $HOME/.bashrc'
     else
         echo -e "\n❌ Failed to install Bun\n"
         return 1

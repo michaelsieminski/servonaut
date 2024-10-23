@@ -18,10 +18,10 @@ setup_nuxt() {
     chown -R servonaut:servonaut /var/www/app
 
     echo -e "\n📦 Installing dependencies...\n"
-    sudo -u servonaut /home/servonaut/.bun/bin/bun install
+    sudo -u servonaut bash -c 'cd /var/www/app && /home/servonaut/.bun/bin/bun install'
 
     echo -e "\n🏗️  Building the Nuxt project...\n"
-    sudo -u servonaut /home/servonaut/.bun/bin/bun run build
+    sudo -u servonaut bash -c 'cd /var/www/app && /home/servonaut/.bun/bin/bun run build'
 
     echo -e "\n🔧 Creating systemd service for Nuxt..."
     cat >/etc/systemd/system/nuxt.service <<EOF
