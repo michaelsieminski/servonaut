@@ -19,17 +19,17 @@ update_system || {
     exit 1
 }
 
-echo -e "\n📦 Installing dependencies...\n"
-sleep 1
-install_dependencies || {
-    echo -e "\n❌ Failed to install dependencies. Exiting."
-    exit 1
-}
-
 echo -e "\n👤 Setting up servonaut user...\n"
 sleep 1
 setup_servonaut_user || {
     echo -e "\n❌ Failed to set up servonaut user. Exiting."
+    exit 1
+}
+
+echo -e "\n📦 Installing dependencies...\n"
+sleep 1
+install_dependencies || {
+    echo -e "\n❌ Failed to install dependencies. Exiting."
     exit 1
 }
 

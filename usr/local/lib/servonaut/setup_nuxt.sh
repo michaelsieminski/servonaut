@@ -10,7 +10,7 @@ setup_nuxt() {
     repo_url=$(cat /home/servonaut/.repo_url)
 
     echo -e "📥 Cloning repository...\n"
-    if ! GIT_SSH_COMMAND="ssh -i /home/servonaut/.ssh/id_ed25519 -o StrictHostKeyChecking=no" git clone "$repo_url" .; then
+    if ! sudo -u servonaut GIT_SSH_COMMAND="ssh -i /home/servonaut/.ssh/id_ed25519 -o StrictHostKeyChecking=no" git clone "$repo_url" .; then
         echo -e "\n❌ Failed to clone the repository. Please check the URL and your SSH key setup.\n"
         exit 1
     fi
@@ -18,10 +18,10 @@ setup_nuxt() {
     chown -R servonaut:servonaut /var/www/app
 
     echo -e "\n📦 Installing dependencies...\n"
-    sudo -u servonaut /root/.bun/bin/bun install
+    sudo -u servonaut /home/servonaut/.bun/bin/bun install
 
     echo -e "\n🏗️  Building the Nuxt project...\n"
-    sudo -u servonaut /root/.bun/bin/bun run build
+    sudo -u servonaut /home/servonaut/.bun/bin/bun run build
 
     echo -e "\n🔧 Creating systemd service for Nuxt..."
     cat >/etc/systemd/system/nuxt.service <<EOF
@@ -33,7 +33,7 @@ After=network.target
 Type=simple
 User=servonaut
 WorkingDirectory=/var/www/app
-ExecStart=/root/.bun/bin/bun run start
+ExecStart=/home/servonaut/.bun/bin/bun run start
 Restart=on-failure
 
 [Install]

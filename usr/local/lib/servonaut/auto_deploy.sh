@@ -16,10 +16,10 @@ cd /var/www/app
 sudo -u servonaut git pull origin main
 
 # Install any new dependencies
-sudo -u servonaut /root/.bun/bin/bun install
+sudo -u servonaut /home/servonaut/.bun/bin/bun install
 
 # Build the Nuxt project
-sudo -u servonaut /root/.bun/bin/bun run build
+sudo -u servonaut /home/servonaut/.bun/bin/bun run build
 
 # Restart the Nuxt service
 systemctl restart nuxt.service

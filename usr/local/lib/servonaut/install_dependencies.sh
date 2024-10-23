@@ -10,15 +10,12 @@ install_dependencies() {
     sleep 1
 
     echo -e "🚀 Installing Bun...\n"
-    if curl -fsSL https://bun.sh/install | bash; then
+    if sudo -u servonaut bash -c "curl -fsSL https://bun.sh/install | bash"; then
         echo -e "\n✅ Bun installed successfully"
-        # Add Bun to PATH for the current session
-        export BUN_INSTALL="/root/.bun"
-        export PATH="/root/.bun/bin:$PATH"
-        # Add Bun to PATH permanently
-        echo 'export BUN_INSTALL="/root/.bun"' >>/root/.bashrc
-        echo 'export PATH="/root/.bun/bin:$PATH"' >>/root/.bashrc
-        source /root/.bashrc
+        # Add Bun to PATH for the servonaut user
+        echo 'export BUN_INSTALL="/home/servonaut/.bun"' >>/home/servonaut/.bashrc
+        echo 'export PATH="/home/servonaut/.bun/bin:$PATH"' >>/home/servonaut/.bashrc
+        source /home/servonaut/.bashrc
     else
         echo -e "\n❌ Failed to install Bun\n"
         return 1
