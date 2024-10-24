@@ -11,33 +11,29 @@ temp_dir=$(mktemp -d)
 
 # Clone the latest version of Servonaut
 if git clone -q https://github.com/michaelsieminski/servonaut.git "$temp_dir"; then
-    # Compare files to check for differences
     changes_found=false
 
-    # Create temporary directories for comparison
-    mkdir -p "$temp_dir/current/bin"
-    mkdir -p "$temp_dir/current/lib"
+    # Compare bin files
+    for file in /usr/local/bin/servonaut*; do
+        basename=$(basename "$file")
+        if ! cmp -s "$file" "$temp_dir/usr/local/bin/$basename"; then
+            changes_found=true
+            echo "📦 Updates found in servonaut commands"
+            break
+        fi
+    done
 
-    # Copy current files to temporary location (maintaining directory structure)
-    cp -R /usr/local/bin/servonaut* "$temp_dir/current/bin/"
-    cp -R /usr/local/lib/servonaut/* "$temp_dir/current/lib/"
-
-    # Normalize permissions for comparison
-    chmod -R 755 "$temp_dir/current"
-    chmod -R 755 "$temp_dir/usr/local"
-
-    # Check bin directory (comparing actual file contents)
-    if ! cmp -s <(find "$temp_dir/current/bin" -type f -exec md5sum {} \; | sort) \
-        <(find "$temp_dir/usr/local/bin" -type f -exec md5sum {} \; | sort); then
-        changes_found=true
-        echo "📦 Updates found in servonaut commands"
-    fi
-
-    # Check lib directory (comparing actual file contents)
-    if ! cmp -s <(find "$temp_dir/current/lib" -type f -exec md5sum {} \; | sort) \
-        <(find "$temp_dir/usr/local/lib/servonaut" -type f -exec md5sum {} \; | sort); then
-        changes_found=true
-        echo "📦 Updates found in servonaut libraries"
+    # Compare lib files recursively
+    if [ -d "/usr/local/lib/servonaut" ]; then
+        while IFS= read -r -d '' current_file; do
+            rel_path=${current_file#/usr/local/lib/servonaut/}
+            new_file="$temp_dir/usr/local/lib/servonaut/$rel_path"
+            if [ -f "$new_file" ] && ! cmp -s "$current_file" "$new_file"; then
+                changes_found=true
+                echo "📦 Updates found in servonaut libraries"
+                break
+            fi
+        done < <(find /usr/local/lib/servonaut -type f -print0)
     fi
 
     if [ "$changes_found" = true ]; then
@@ -52,6 +48,7 @@ if git clone -q https://github.com/michaelsieminski/servonaut.git "$temp_dir"; t
         chmod +x /usr/local/lib/servonaut/utils/*.sh
 
         echo -e "\n✅ Servonaut has been successfully updated to the latest version."
+        echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
     else
         echo -e "\n✨ Servonaut is already up to date!"
     fi
@@ -62,7 +59,3 @@ fi
 
 # Clean up the temporary directory
 rm -rf "$temp_dir"
-
-if [ "$changes_found" = true ]; then
-    echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
-fi
