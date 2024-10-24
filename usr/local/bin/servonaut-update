@@ -10,18 +10,26 @@ echo -e "🔄 Checking for Servonaut updates...\n"
 temp_dir=$(mktemp -d)
 
 # Clone the latest version of Servonaut
-if git clone https://github.com/michaelsieminski/servonaut.git "$temp_dir"; then
+if git clone -q https://github.com/michaelsieminski/servonaut.git "$temp_dir"; then
     # Compare files to check for differences
     changes_found=false
 
+    # Create temporary directories for comparison
+    mkdir -p "$temp_dir/current/bin"
+    mkdir -p "$temp_dir/current/lib"
+
+    # Copy current files to temporary location
+    cp -R /usr/local/bin/servonaut* "$temp_dir/current/bin/"
+    cp -R /usr/local/lib/servonaut/ "$temp_dir/current/lib/"
+
     # Check bin directory
-    if ! diff -r /usr/local/bin/servonaut* "$temp_dir/usr/local/bin/" >/dev/null 2>&1; then
+    if ! diff -r "$temp_dir/current/bin" "$temp_dir/usr/local/bin" >/dev/null 2>&1; then
         changes_found=true
         echo "📦 Updates found in servonaut commands"
     fi
 
     # Check lib directory
-    if ! diff -r /usr/local/lib/servonaut/ "$temp_dir/usr/local/lib/servonaut/" >/dev/null 2>&1; then
+    if ! diff -r "$temp_dir/current/lib" "$temp_dir/usr/local/lib/servonaut" >/dev/null 2>&1; then
         changes_found=true
         echo "📦 Updates found in servonaut libraries"
     fi
