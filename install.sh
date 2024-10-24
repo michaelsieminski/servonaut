@@ -9,6 +9,11 @@ fi
 # Define the source directory (the current directory where the script is run)
 source_dir=$(dirname "$0")
 
+# Create the target directories if they don't exist
+mkdir -p /usr/local/bin
+mkdir -p /usr/local/lib/servonaut
+mkdir -p /usr/local/lib/servonaut/utils
+
 # Copy the scripts to the appropriate locations
 cp -R "$source_dir/usr/local/bin/"* /usr/local/bin/
 cp -R "$source_dir/usr/local/lib/servonaut/"* /usr/local/lib/servonaut/
