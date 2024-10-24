@@ -17,14 +17,28 @@ setup_webhook() {
     "command-working-directory": "/var/www/app",
     "response-message": "Deploying application...",
     "trigger-rule": {
-      "match": {
-        "type": "payload-hmac-sha1",
-        "secret": "$(cat /home/servonaut/.webhook_token)",
-        "parameter": {
-          "source": "header",
-          "name": "X-Hub-Signature"
+      "and": [
+        {
+          "match": {
+            "type": "payload-hmac-sha256",
+            "secret": "$(cat /home/servonaut/.webhook_token)",
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature-256"
+            }
+          }
+        },
+        {
+          "match": {
+            "type": "value",
+            "value": "refs/heads/main",
+            "parameter": {
+              "source": "payload",
+              "name": "ref"
+            }
+          }
         }
-      }
+      ]
     }
   }
 ]

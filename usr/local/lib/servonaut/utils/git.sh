@@ -116,7 +116,9 @@ setup_github_webhook() {
             "config": {
                 "url": "http://'$domain_name':9000/hooks/servonaut-deploy",
                 "content_type": "json",
-                "secret": "'$webhook_token'"
+                "insecure_ssl": "0",
+                "secret": "'$webhook_token'",
+                "digest": "sha256"
             }
         }')
 
