@@ -18,18 +18,24 @@ if git clone -q https://github.com/michaelsieminski/servonaut.git "$temp_dir"; t
     mkdir -p "$temp_dir/current/bin"
     mkdir -p "$temp_dir/current/lib"
 
-    # Copy current files to temporary location
+    # Copy current files to temporary location (maintaining directory structure)
     cp -R /usr/local/bin/servonaut* "$temp_dir/current/bin/"
-    cp -R /usr/local/lib/servonaut/ "$temp_dir/current/lib/"
+    cp -R /usr/local/lib/servonaut/* "$temp_dir/current/lib/"
 
-    # Check bin directory
-    if ! diff -r "$temp_dir/current/bin" "$temp_dir/usr/local/bin" >/dev/null 2>&1; then
+    # Normalize permissions for comparison
+    chmod -R 755 "$temp_dir/current"
+    chmod -R 755 "$temp_dir/usr/local"
+
+    # Check bin directory (comparing actual file contents)
+    if ! cmp -s <(find "$temp_dir/current/bin" -type f -exec md5sum {} \; | sort) \
+        <(find "$temp_dir/usr/local/bin" -type f -exec md5sum {} \; | sort); then
         changes_found=true
         echo "📦 Updates found in servonaut commands"
     fi
 
-    # Check lib directory
-    if ! diff -r "$temp_dir/current/lib" "$temp_dir/usr/local/lib/servonaut" >/dev/null 2>&1; then
+    # Check lib directory (comparing actual file contents)
+    if ! cmp -s <(find "$temp_dir/current/lib" -type f -exec md5sum {} \; | sort) \
+        <(find "$temp_dir/usr/local/lib/servonaut" -type f -exec md5sum {} \; | sort); then
         changes_found=true
         echo "📦 Updates found in servonaut libraries"
     fi
