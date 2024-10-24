@@ -6,9 +6,10 @@ source /usr/local/lib/servonaut/utils/git.sh
 source /usr/local/lib/servonaut/utils/domain.sh
 
 source /usr/local/lib/servonaut/install_dependencies.sh
+source /usr/local/lib/servonaut/security.sh
 source /usr/local/lib/servonaut/setup_caddy.sh
 source /usr/local/lib/servonaut/setup_nuxt.sh
-source /usr/local/lib/servonaut/security.sh
+source /usr/local/lib/servonaut/setup_webhook.sh
 
 clear
 
@@ -68,6 +69,13 @@ echo -e "\n🚀 Setting up Caddy web server...\n"
 sleep 1
 setup_caddy || {
     echo -e "\n❌ Failed to set up Caddy web server. Exiting."
+    exit 1
+}
+
+echo -e "\n🎣 Setting up webhook handler...\n"
+sleep 1
+setup_webhook || {
+    echo -e "\n❌ Failed to set up webhook handler. Exiting."
     exit 1
 }
 

@@ -48,7 +48,7 @@ EOF
         webhook_path=$(cat /home/servonaut/.webhook_path)
         webhook_config="
     handle $webhook_path {
-        reverse_proxy unix//run/webhook/webhook.sock
+        reverse_proxy localhost:9000
     }
     "
     else
@@ -72,46 +72,6 @@ EOF
     chown -R servonaut:servonaut /etc/caddy
     chmod 755 /etc/caddy
     chmod 644 /etc/caddy/Caddyfile
-
-    # Create webhook directory with proper permissions
-    mkdir -p /run/webhook
-    chown root:servonaut /run/webhook
-    chmod 775 /run/webhook
-
-    ## Create webhook service
-    cat >/etc/systemd/system/webhook.service <<EOF
-[Unit]
-Description=GitHub Webhook Handler
-After=network.target
-
-[Service]
-Type=simple
-User=servonaut
-WorkingDirectory=/usr/local/lib/servonaut
-ExecStartPre=/bin/mkdir -p /run/webhook
-ExecStartPre=/bin/chown servonaut:servonaut /run/webhook
-ExecStartPre=/bin/chmod 755 /run/webhook
-ExecStart=/usr/local/lib/servonaut/webhook_server.sh
-Restart=on-failure
-RuntimeDirectory=webhook
-RuntimeDirectoryMode=0755
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-    # Create tmpfiles configuration for webhook socket
-    cat >/etc/tmpfiles.d/webhook.conf <<EOF
-d /run/webhook 0755 servonaut servonaut -
-EOF
-
-    systemd-tmpfiles --create
-
-    # Make webhook server executable and start service
-    chmod +x /usr/local/lib/servonaut/webhook_server.sh
-    systemctl daemon-reload
-    systemctl enable webhook.service
-    systemctl start webhook.service
 
     # Reload Caddy to apply the changes
     if ! systemctl reload caddy.service; then

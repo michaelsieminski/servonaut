@@ -116,6 +116,6 @@ setup_ufw() {
     # Enable UFW
     echo "y" | ufw enable
 
-    echo -e "\n✅ UFW has been set up successfully with basic rules."
+    echo -e "\n✅ UFW has been set up successfully."
     return 0
 }
