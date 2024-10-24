@@ -2,6 +2,13 @@
 
 setup_nuxt() {
     echo -e "📁 Setting up Nuxt project directory\n"
+
+    # Check if app directory exists and remove it if it does
+    if [ -d "/var/www/app" ]; then
+        echo -e "🗑️  Removing existing app directory...\n"
+        rm -rf /var/www/app
+    fi
+
     mkdir -p /var/www/app
     chown -R servonaut:servonaut /var/www/app
     chmod -R 755 /var/www/app
