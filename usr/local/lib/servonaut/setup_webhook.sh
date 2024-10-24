@@ -10,22 +10,24 @@ setup_webhook() {
 
   # Create webhook hooks configuration
   cat >/etc/webhook/hooks.json <<EOF
-{
-  "id": "servonaut-deploy",
-  "execute-command": "/usr/local/lib/servonaut/auto_deploy.sh",
-  "command-working-directory": "/var/www/app",
-  "response-message": "Deploying application...",
-  "trigger-rule": {
-    "match": {
-      "type": "payload-hmac-sha1",
-      "secret": "$(cat /home/servonaut/.webhook_token)",
-      "parameter": {
-        "source": "header",
-        "name": "X-Hub-Signature"
+[
+  {
+    "id": "servonaut-deploy",
+    "execute-command": "/usr/local/lib/servonaut/auto_deploy.sh",
+    "command-working-directory": "/var/www/app",
+    "response-message": "Deploying application...",
+    "trigger-rule": {
+      "match": {
+        "type": "payload-hmac-sha1",
+        "secret": "$(cat /home/servonaut/.webhook_token)",
+        "parameter": {
+          "source": "header",
+          "name": "X-Hub-Signature"
+        }
       }
     }
   }
-}
+]
 EOF
 
   chmod 644 /etc/webhook/hooks.json

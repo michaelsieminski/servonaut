@@ -1,8 +1,0 @@
-Package: servonaut
-Version: 1.0
-Section: web
-Priority: optional
-Architecture: arm64
-Depends: curl, unzip
-Maintainer: Michael Sieminski <work.michael@pm.me>
-Description: Automated Nuxt.js deployment tool. Simplifies server setup, security, and application deployment for developers.
