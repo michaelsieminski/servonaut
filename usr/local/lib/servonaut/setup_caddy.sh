@@ -65,13 +65,15 @@ EOF
     mkdir -p /etc/caddy
     cat >/etc/caddy/Caddyfile <<EOF
 $domain_name {
-    root * /var/www/app/.output/public
-    encode gzip
-    file_server
+    # Webhook endpoint
+    handle /servonaut-webhook-* {
+        reverse_proxy localhost:9000
+    }
 
-    $webhook_config
-
-    reverse_proxy localhost:3000
+    # Main application
+    handle /* {
+        reverse_proxy localhost:3000
+    }
 }
 EOF
 
