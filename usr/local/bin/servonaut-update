@@ -2,10 +2,9 @@
 
 source /usr/local/lib/servonaut/utils/system.sh
 
-clear
 check_root
 
-echo -e "🔄 Checking for Servonaut updates...\n"
+echo -e "\n🔄 Checking for Servonaut updates...\n"
 
 temp_dir=$(mktemp -d)
 
