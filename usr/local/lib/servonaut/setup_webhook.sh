@@ -17,32 +17,16 @@ setup_webhook() {
     "command-working-directory": "/var/www/app",
     "response-message": "Deploying application...",
     "trigger-rule": {
-      "and": [
+      "match":
+      {
+        "type": "payload-hash-sha1",
+        "secret": "$(cat /home/servonaut/.webhook_token)",
+        "parameter":
         {
-          "match":
-          {
-            "type": "payload-hash-sha1",
-            "secret": "$(cat /home/servonaut/.webhook_token)",
-            "parameter":
-            {
-              "source": "header",
-              "name": "X-Hub-Signature"
-            }
-          }
-        },
-        {
-          "match":
-          {
-            "type": "value",
-            "value": "tag",
-            "parameter":
-            {
-              "source": "payload",
-              "name": "ref_type"
-            }
-          }
+          "source": "header",
+          "name": "X-Hub-Signature"
         }
-      ]
+      }
     }
   }
 ]
