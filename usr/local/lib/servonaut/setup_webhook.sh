@@ -51,21 +51,22 @@ EOF
   chmod 644 /etc/webhook/hooks.json
 
   # Ensure webhook can access certificates
-  mkdir -p /etc/caddy/certificates
-  chown -R servonaut:servonaut /etc/caddy/certificates
-  chmod -R 755 /etc/caddy/certificates
+  mkdir -p /var/lib/caddy/.local/share/caddy/certificates
+  chown -R servonaut:servonaut /var/lib/caddy/.local/share/caddy/certificates
+  chmod -R 755 /var/lib/caddy/.local/share/caddy/certificates
 
   # Create webhook service
   cat >/etc/systemd/system/webhook.service <<EOF
 [Unit]
 Description=GitHub Webhook Handler
-After=network.target
+After=network.target caddy.service
+Requires=caddy.service
 
 [Service]
 Type=simple
 User=servonaut
 Environment=WEBHOOK_SECRET=$(cat /home/servonaut/.webhook_token)
-ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000 -secure -cert /etc/caddy/certificates/$domain_name/$domain_name.crt -key /etc/caddy/certificates/$domain_name/$domain_name.key
+ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000 -secure -cert /var/lib/caddy/.local/share/caddy/certificates/$domain_name/$domain_name.crt -key /var/lib/caddy/.local/share/caddy/certificates/$domain_name/$domain_name.key
 Restart=on-failure
 
 [Install]
