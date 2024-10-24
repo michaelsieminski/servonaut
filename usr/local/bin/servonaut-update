@@ -48,7 +48,7 @@ if git clone -q https://github.com/michaelsieminski/servonaut.git "$temp_dir"; t
         chmod +x /usr/local/lib/servonaut/utils/*.sh
 
         echo -e "\n✅ Servonaut has been successfully updated to the latest version."
-        echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
+        echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut.\n"
     else
         echo -e "✨ Servonaut is already up to date!\n"
     fi
