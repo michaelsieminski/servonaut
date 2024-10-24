@@ -49,31 +49,15 @@ EOF
         return 1
     fi
 
-    # Read the webhook path if it exists
-    if [ -f /home/servonaut/.webhook_path ]; then
-        webhook_path=$(cat /home/servonaut/.webhook_path)
-        webhook_config="
-    handle $webhook_path {
-        reverse_proxy localhost:9000
-    }
-    "
-    else
-        webhook_config=""
-    fi
-
     # Configure Caddy
     mkdir -p /etc/caddy
     cat >/etc/caddy/Caddyfile <<EOF
 $domain_name {
-    # Webhook endpoint
-    handle /servonaut-webhook-* {
-        reverse_proxy localhost:9000
-    }
+    root * /var/www/app/.output/public
+    encode gzip
+    file_server
 
-    # Main application
-    handle /* {
-        reverse_proxy localhost:3000
-    }
+    reverse_proxy localhost:3000
 }
 EOF
 

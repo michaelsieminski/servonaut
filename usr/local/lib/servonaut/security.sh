@@ -113,6 +113,9 @@ setup_ufw() {
     ufw allow http
     ufw allow https
 
+    # Allow Webhook Service
+    ufw allow 9000/tcp
+
     # Enable UFW
     echo "y" | ufw enable
 

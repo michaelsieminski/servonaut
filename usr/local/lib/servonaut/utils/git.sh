@@ -98,7 +98,6 @@ setup_github_webhook() {
 
     # Generate a secure random token for the webhook
     webhook_token=$(openssl rand -hex 20)
-    webhook_path="/servonaut-webhook-$(openssl rand -hex 8)"
 
     repo_url=$(cat /home/servonaut/.repo_url)
     owner=$(echo $repo_url | sed -n 's/.*:\(.*\)\/.*/\1/p')
@@ -115,7 +114,7 @@ setup_github_webhook() {
             "active": true,
             "events": ["push"],
             "config": {
-                "url": "https://'$domain_name$webhook_path'",
+                "url": "http://'$domain_name':9000/hooks/servonaut-deploy",
                 "content_type": "json",
                 "secret": "'$webhook_token'"
             }
@@ -123,11 +122,10 @@ setup_github_webhook() {
 
     if [ "$response" -eq 201 ]; then
         echo -e "\n✅ GitHub webhook created successfully!"
-        # Save webhook information for later use
-        echo "$webhook_path" >/home/servonaut/.webhook_path
+        # Save webhook token for later use
         echo "$webhook_token" >/home/servonaut/.webhook_token
-        chmod 600 /home/servonaut/.webhook_path /home/servonaut/.webhook_token
-        chown servonaut:servonaut /home/servonaut/.webhook_path /home/servonaut/.webhook_token
+        chmod 600 /home/servonaut/.webhook_token
+        chown servonaut:servonaut /home/servonaut/.webhook_token
         return 0
     else
         echo -e "\n❌ Failed to create GitHub webhook. Please check your token and try again."
