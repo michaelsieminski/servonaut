@@ -19,22 +19,26 @@ setup_webhook() {
     "trigger-rule": {
       "and": [
         {
-          "match": {
-            "type": "payload-hmac-sha256",
+          "match":
+          {
+            "type": "payload-hash-sha1",
             "secret": "$(cat /home/servonaut/.webhook_token)",
-            "parameter": {
+            "parameter":
+            {
               "source": "header",
-              "name": "X-Hub-Signature-256"
+              "name": "X-Hub-Signature"
             }
           }
         },
         {
-          "match": {
+          "match":
+          {
             "type": "value",
-            "value": "refs/heads/main",
-            "parameter": {
+            "value": "tag",
+            "parameter":
+            {
               "source": "payload",
-              "name": "ref"
+              "name": "ref_type"
             }
           }
         }
@@ -46,6 +50,11 @@ EOF
 
   chmod 644 /etc/webhook/hooks.json
 
+  # Ensure webhook can access certificates
+  mkdir -p /etc/caddy/certificates
+  chown -R servonaut:servonaut /etc/caddy/certificates
+  chmod -R 755 /etc/caddy/certificates
+
   # Create webhook service
   cat >/etc/systemd/system/webhook.service <<EOF
 [Unit]
@@ -56,7 +65,7 @@ After=network.target
 Type=simple
 User=servonaut
 Environment=WEBHOOK_SECRET=$(cat /home/servonaut/.webhook_token)
-ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000
+ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000 -secure -cert /etc/caddy/certificates/$domain_name/$domain_name.crt -key /etc/caddy/certificates/$domain_name/$domain_name.key
 Restart=on-failure
 
 [Install]
