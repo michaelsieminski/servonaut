@@ -3,31 +3,52 @@
 source /usr/local/lib/servonaut/utils/system.sh
 
 clear
-
 check_root
 
-echo -e "🔄 Updating Servonaut...\n"
+echo -e "🔄 Checking for Servonaut updates...\n"
 
 temp_dir=$(mktemp -d)
 
 # Clone the latest version of Servonaut
 if git clone https://github.com/michaelsieminski/servonaut.git "$temp_dir"; then
-    # Copy the updated files to the correct locations
-    cp -R "$temp_dir/usr/local/bin/"* /usr/local/bin/
-    cp -R "$temp_dir/usr/local/lib/servonaut/"* /usr/local/lib/servonaut/
+    # Compare files to check for differences
+    changes_found=false
 
-    # Make sure all scripts are executable
-    chmod +x /usr/local/bin/servonaut*
-    chmod +x /usr/local/lib/servonaut/*.sh
-    chmod +x /usr/local/lib/servonaut/utils/*.sh
+    # Check bin directory
+    if ! diff -r /usr/local/bin/servonaut* "$temp_dir/usr/local/bin/" >/dev/null 2>&1; then
+        changes_found=true
+        echo "📦 Updates found in servonaut commands"
+    fi
 
-    echo -e "\n✅ Servonaut has been successfully updated to the latest version."
+    # Check lib directory
+    if ! diff -r /usr/local/lib/servonaut/ "$temp_dir/usr/local/lib/servonaut/" >/dev/null 2>&1; then
+        changes_found=true
+        echo "📦 Updates found in servonaut libraries"
+    fi
+
+    if [ "$changes_found" = true ]; then
+        echo -e "\n🔄 Installing updates..."
+        # Copy the updated files to the correct locations
+        cp -R "$temp_dir/usr/local/bin/"* /usr/local/bin/
+        cp -R "$temp_dir/usr/local/lib/servonaut/"* /usr/local/lib/servonaut/
+
+        # Make sure all scripts are executable
+        chmod +x /usr/local/bin/servonaut*
+        chmod +x /usr/local/lib/servonaut/*.sh
+        chmod +x /usr/local/lib/servonaut/utils/*.sh
+
+        echo -e "\n✅ Servonaut has been successfully updated to the latest version."
+    else
+        echo -e "\n✨ Servonaut is already up to date!"
+    fi
 else
-    echo -e "\n❌ Failed to update Servonaut. Please check your internet connection and try again."
+    echo -e "\n❌ Failed to check for updates. Please check your internet connection and try again."
     exit 1
 fi
 
 # Clean up the temporary directory
 rm -rf "$temp_dir"
 
-echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
+if [ "$changes_found" = true ]; then
+    echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
+fi
