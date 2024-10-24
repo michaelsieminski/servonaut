@@ -50,7 +50,7 @@ if git clone -q https://github.com/michaelsieminski/servonaut.git "$temp_dir"; t
         echo -e "\n✅ Servonaut has been successfully updated to the latest version."
         echo -e "\n🎉 Update complete! You can now use the latest version of Servonaut."
     else
-        echo -e "\n✨ Servonaut is already up to date!"
+        echo -e "✨ Servonaut is already up to date!\n"
     fi
 else
     echo -e "\n❌ Failed to check for updates. Please check your internet connection and try again."
