@@ -57,7 +57,13 @@ $domain_name {
     encode gzip
     file_server
 
-    reverse_proxy localhost:3000
+    handle /hooks/* {
+        reverse_proxy localhost:9000
+    }
+
+    handle /* {
+        reverse_proxy localhost:3000
+    }
 }
 EOF
 

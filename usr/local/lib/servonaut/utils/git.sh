@@ -114,7 +114,7 @@ setup_github_webhook() {
             "active": true,
             "events": ["push"],
             "config": {
-                "url": "https://'$domain_name':9000/hooks/servonaut-deploy",
+                "url": "https://'$domain_name'/hooks/servonaut-deploy",
                 "content_type": "json",
                 "secret": "'$webhook_token'"
             }

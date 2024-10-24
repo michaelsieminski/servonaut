@@ -59,14 +59,13 @@ EOF
   cat >/etc/systemd/system/webhook.service <<EOF
 [Unit]
 Description=GitHub Webhook Handler
-After=network.target caddy.service
-Requires=caddy.service
+After=network.target
 
 [Service]
 Type=simple
 User=servonaut
 Environment=WEBHOOK_SECRET=$(cat /home/servonaut/.webhook_token)
-ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000 -secure -cert /var/lib/caddy/.local/share/caddy/certificates/$domain_name/$domain_name.crt -key /var/lib/caddy/.local/share/caddy/certificates/$domain_name/$domain_name.key
+ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000
 Restart=on-failure
 
 [Install]
