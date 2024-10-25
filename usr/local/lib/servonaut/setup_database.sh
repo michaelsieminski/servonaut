@@ -12,16 +12,17 @@ select_database() {
     selected=0
 
     while true; do
-        # Clear screen
-        echo -e "\033[2J\033[H"
-        echo -e "🗄️  Select a database to install:\n"
+        # Clear screen and show header
+        clear
+        echo -e "\n  Select database engine:"
+        echo -e "  Press ↑↓ to select, enter to confirm\n"
 
         # Display options
         for i in "${!options[@]}"; do
             if [ $i -eq $selected ]; then
-                echo -e "\033[36m> ${options[$i]}\033[0m"
+                echo -e "    \033[36m❯\033[0m ${options[$i]}"
             else
-                echo "  ${options[$i]}"
+                echo -e "      ${options[$i]}"
             fi
         done
 
@@ -53,7 +54,7 @@ select_database() {
     chmod 600 /home/servonaut/.database_choice
     chown servonaut:servonaut /home/servonaut/.database_choice
 
-    echo -e "\n✅ Database selection saved: ${options[$selected]}"
+    echo -e "\n  ✓ Using: ${options[$selected]}\n"
     return 0
 }
 
