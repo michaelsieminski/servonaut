@@ -1,63 +1,33 @@
 #!/bin/bash
 
 select_database() {
-    # Save current terminal settings
-    saved_stty=$(stty -g)
-
-    # Configure terminal for menu
-    stty raw -echo
-
     # Available options
-    options=("None" "PostgreSQL")
-    selected=0
+    options=("No database" "PostgreSQL (recommended for production)")
 
-    while true; do
-        # Clear screen and position cursor
-        printf "\033[H\033[2J"
-        printf "\033[3;0H" # Move to line 3, column 0
+    # Call select_option with more friendly messages
+    select_option "Would you like to install a database?" "Use arrow keys to select an option, Enter to confirm" "${options[@]}"
+    selected=$?
 
-        echo "Select database engine:"
-        echo "Press ↑↓ to select, enter to confirm"
-        echo ""
-
-        # Display options
-        for i in "${!options[@]}"; do
-            if [ $i -eq $selected ]; then
-                echo -e "\033[36m❯\033[0m ${options[$i]}"
-            else
-                echo -e "  ${options[$i]}"
-            fi
-        done
-
-        # Read key press
-        read -r -n1 key
-
-        case $key in
-        A) # Up arrow
-            if [ $selected -gt 0 ]; then
-                selected=$((selected - 1))
-            fi
-            ;;
-        B) # Down arrow
-            if [ $selected -lt $((${#options[@]} - 1)) ]; then
-                selected=$((selected + 1))
-            fi
-            ;;
-        '') # Enter key
-            break
-            ;;
-        esac
-    done
-
-    # Restore terminal settings
-    stty $saved_stty
+    # Convert friendly names back to internal names
+    case "${options[$selected]}" in
+    "No database")
+        choice="None"
+        ;;
+    "PostgreSQL (recommended for production)")
+        choice="PostgreSQL"
+        ;;
+    esac
 
     # Store selection
-    echo "${options[$selected]}" >/home/servonaut/.database_choice
+    echo "$choice" >/home/servonaut/.database_choice
     chmod 600 /home/servonaut/.database_choice
     chown servonaut:servonaut /home/servonaut/.database_choice
 
-    echo -e "\n✓ Using: ${options[$selected]}\n"
+    if [ "$choice" = "None" ]; then
+        echo -e "\n✓ No database will be installed\n"
+    else
+        echo -e "\n✓ Selected: $choice\n"
+    fi
     return 0
 }
 
