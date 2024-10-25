@@ -12,10 +12,13 @@ select_database() {
     selected=0
 
     while true; do
-        # Clear screen and show header
-        clear
-        echo -e "Select database engine:"
-        echo -e "Press ↑↓ to select, enter to confirm\n"
+        # Clear screen and position cursor
+        printf "\033[H\033[2J"
+        printf "\033[3;0H" # Move to line 3, column 0
+
+        echo "Select database engine:"
+        echo "Press ↑↓ to select, enter to confirm"
+        echo ""
 
         # Display options
         for i in "${!options[@]}"; do
