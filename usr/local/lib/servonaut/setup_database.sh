@@ -37,15 +37,22 @@ setup_postgres() {
     # Install PostgreSQL
     apt-get install -y postgresql postgresql-contrib
 
+    # Configure PostgreSQL to listen on all interfaces
+    pg_version=$(ls /etc/postgresql/)
+    sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/$pg_version/main/postgresql.conf
+
+    # Allow remote connections
+    echo "host    all             all             0.0.0.0/0               md5" >>/etc/postgresql/$pg_version/main/pg_hba.conf
+
     # Generate secure password for postgres user
     db_password=$(openssl rand -base64 24)
     echo "$db_password" >/home/servonaut/.db_password
     chmod 600 /home/servonaut/.db_password
     chown servonaut:servonaut /home/servonaut/.db_password
 
-    # Start PostgreSQL service
+    # Restart PostgreSQL to apply changes
+    systemctl restart postgresql
     systemctl enable postgresql
-    systemctl start postgresql
 
     # Create database and user
     sudo -u postgres psql -c "CREATE USER servonaut WITH PASSWORD '$db_password';"
@@ -53,6 +60,12 @@ setup_postgres() {
 
     # Get server IP
     server_ip=$(get_server_ip)
+
+    # Verify PostgreSQL is running and accessible
+    if ! netstat -tuln | grep -q ":5432 "; then
+        echo -e "\n❌ PostgreSQL is not listening on port 5432. Please check the logs with 'journalctl -u postgresql'"
+        return 1
+    fi
 
     # Clear screen and show connection details
     clear
@@ -69,7 +82,7 @@ setup_postgres() {
     printf "└────────────────┴────────────────────────────────────────────┘\n"
 
     echo -e "\n📋 TablePlus Connection URL:"
-    echo "postgres://servonaut:$db_password@$server_ip:5432/servonaut"
+    echo "postgresql://servonaut@$server_ip/servonaut"
 
     echo -e "\n⚠️  Make sure to save these credentials securely!"
     echo -e "Press ENTER to continue..."
