@@ -14,15 +14,15 @@ select_database() {
     while true; do
         # Clear screen and show header
         clear
-        echo -e "\n  Select database engine:"
-        echo -e "  Press ↑↓ to select, enter to confirm\n"
+        echo -e "Select database engine:"
+        echo -e "Press ↑↓ to select, enter to confirm\n"
 
         # Display options
         for i in "${!options[@]}"; do
             if [ $i -eq $selected ]; then
-                echo -e "    \033[36m❯\033[0m ${options[$i]}"
+                echo -e "\033[36m❯\033[0m ${options[$i]}"
             else
-                echo -e "      ${options[$i]}"
+                echo -e "  ${options[$i]}"
             fi
         done
 
@@ -54,7 +54,7 @@ select_database() {
     chmod 600 /home/servonaut/.database_choice
     chown servonaut:servonaut /home/servonaut/.database_choice
 
-    echo -e "\n  ✓ Using: ${options[$selected]}\n"
+    echo -e "\n✓ Using: ${options[$selected]}\n"
     return 0
 }
 
