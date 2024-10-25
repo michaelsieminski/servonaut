@@ -50,6 +50,15 @@ setup_postgres() {
     chmod 600 /home/servonaut/.db_password
     chown servonaut:servonaut /home/servonaut/.db_password
 
+    # Secure PostgreSQL configuration
+    cat >>/etc/postgresql/$pg_version/main/postgresql.conf <<EOF
+ssl = on
+ssl_prefer_server_ciphers = on
+ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
+ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'
+EOF
+
     # Restart PostgreSQL to apply changes
     systemctl restart postgresql
     systemctl enable postgresql

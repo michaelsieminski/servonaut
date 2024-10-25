@@ -28,7 +28,6 @@ setup_servonaut_user() {
         echo -e "📝 Please note down the following credentials:"
         echo -e "   Username: servonaut"
         echo -e "   Password: $password"
-        echo -e "\nIt's recommended to disable the root account and use a sudo user instead."
 
         read -p "Press Enter if you have noted down the credentials"
         return 0
@@ -116,6 +115,15 @@ setup_ufw() {
     # Allow Webhook Service
     ufw allow 9000/tcp
 
+    # Block null packets
+    ufw deny-incoming proto tcp flags FIN,SYN,RST,PSH,ACK,URG NONE
+
+    # Block SYN-flood attacks
+    ufw limit syn
+
+    # Rate limit SSH connections
+    ufw limit ssh
+
     # Allow PostgreSQL if installed
     if [ -f "/home/servonaut/.database_choice" ] && [ "$(cat /home/servonaut/.database_choice)" = "PostgreSQL" ]; then
         ufw allow 5432/tcp
@@ -125,5 +133,100 @@ setup_ufw() {
     echo "y" | ufw enable
 
     echo -e "\n✅ UFW has been set up successfully."
+    return 0
+}
+
+setup_ssh_security() {
+    echo -e "🔒 Hardening SSH configuration...\n"
+
+    # Backup original config
+    cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+
+    # Configure SSH security settings
+    cat >/etc/ssh/sshd_config <<EOF
+Port 22
+Protocol 2
+PermitRootLogin no
+MaxAuthTries 3
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding no
+PrintMotd no
+ClientAliveInterval 300
+ClientAliveCountMax 2
+AllowUsers servonaut
+EOF
+
+    # Restart SSH service
+    systemctl restart sshd
+
+    echo -e "\n✅ SSH has been hardened successfully."
+    return 0
+}
+
+setup_system_security() {
+    echo -e "🛡️ Configuring system security...\n"
+
+    # Configure sysctl security settings
+    cat >/etc/sysctl.d/99-security.conf <<EOF
+# IP Spoofing protection
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+
+# Ignore ICMP broadcast requests
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+# Disable source packet routing
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv6.conf.all.accept_source_route = 0
+
+# Ignore send redirects
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+
+# Block SYN attacks
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_max_syn_backlog = 2048
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_syn_retries = 5
+
+# Log Martians
+net.ipv4.conf.all.log_martians = 1
+
+# Disable IPv6 if not needed
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+EOF
+
+    # Apply sysctl settings
+    sysctl -p /etc/sysctl.d/99-security.conf
+
+    # Secure shared memory
+    echo "tmpfs     /run/shm     tmpfs     defaults,noexec,nosuid     0     0" >>/etc/fstab
+
+    echo -e "\n✅ System security settings have been configured."
+    return 0
+}
+
+setup_crowdsec() {
+    echo -e "🛡️  Setting up CrowdSec...\n"
+
+    # Install CrowdSec
+    curl -s https://packagecloud.io/install/repositories/crowdsec/crowdsec/script.deb.sh | bash
+    apt-get install -y crowdsec
+
+    # Install bouncer
+    apt-get install -y crowdsec-firewall-bouncer-iptables
+
+    # Enable and start CrowdSec
+    systemctl enable crowdsec
+    systemctl start crowdsec
+
+    # Configure CrowdSec to watch Caddy logs
+    cscli collections install crowdsecurity/caddy
+    systemctl restart crowdsec
+
+    echo -e "\n✅ CrowdSec has been set up successfully."
     return 0
 }
