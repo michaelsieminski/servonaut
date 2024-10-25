@@ -19,7 +19,6 @@ EOF
       echo "Available commands:"
       echo "  servonaut setup     - Set up a new Nuxt deployment"
       echo "  servonaut update    - Update Servonaut to the latest version"
-      echo "  servonaut uninstall - Uninstall Servonaut and remove all configurations"
 
       echo -e "\nFor more information, visit: https://github.com/michaelsieminski/servonaut"
 }
@@ -37,9 +36,6 @@ setup)
       ;;
 update)
       /usr/local/bin/servonaut-update
-      ;;
-uninstall)
-      /usr/local/bin/servonaut-uninstall
       ;;
 *)
       echo "Unknown command: $1"
