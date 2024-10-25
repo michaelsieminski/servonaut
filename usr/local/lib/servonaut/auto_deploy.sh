@@ -10,6 +10,12 @@ cd /var/www/app || {
     exit 1
 }
 
+echo "Resetting local changes..."
+sudo -u servonaut git reset --hard HEAD || {
+    echo "Git reset failed"
+    exit 1
+}
+
 echo "Pulling latest changes..."
 sudo -u servonaut git pull origin main || {
     echo "Git pull failed"
