@@ -19,11 +19,11 @@ setup_webhook() {
       "and": [
         {
           "match": {
-            "type": "payload-hmac-sha256",
+            "type": "payload-hash-sha1",
             "secret": "$(cat /home/servonaut/.webhook_token)",
             "parameter": {
               "source": "header",
-              "name": "X-Hub-Signature-256"
+              "name": "X-Hub-Signature"
             }
           }
         },
