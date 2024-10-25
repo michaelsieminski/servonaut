@@ -10,6 +10,7 @@ source /usr/local/lib/servonaut/security.sh
 source /usr/local/lib/servonaut/setup_caddy.sh
 source /usr/local/lib/servonaut/setup_nuxt.sh
 source /usr/local/lib/servonaut/setup_webhook.sh
+source /usr/local/lib/servonaut/setup_database.sh
 
 clear
 
@@ -36,27 +37,23 @@ install_dependencies || {
     exit 1
 }
 
-echo -e "\n🛡️  Hardening the server...\n"
-sleep 1
-setup_automatic_security_updates || {
-    echo -e "\n❌ Failed to set up automatic security updates. Exiting."
-    exit 1
-}
-setup_fail2ban || {
-    echo -e "\n❌ Failed to set up fail2ban. Exiting."
-    exit 1
-}
-setup_ufw || {
-    echo -e "\n❌ Failed to set up UFW. Exiting."
-    exit 1
-}
-
 echo -e "\n📝 Setting up domain...\n"
 sleep 1
 setup_domain || {
     echo -e "\n❌ Failed to set up domain. Exiting."
     exit 1
 }
+
+echo -e "\n🗄️  Setting up database...\n"
+sleep 1
+select_database
+db_choice=$(cat /home/servonaut/.database_choice)
+if [ "$db_choice" = "PostgreSQL" ]; then
+    setup_postgres || {
+        echo -e "\n❌ Failed to set up PostgreSQL. Exiting."
+        exit 1
+    }
+fi
 
 echo -e "\n🛠️  Setting up Nuxt project...\n"
 sleep 1
@@ -84,6 +81,21 @@ sleep 1
 systemctl daemon-reload
 systemctl restart nuxt.service || {
     echo -e "\n❌ Failed to restart Nuxt service. Exiting."
+    exit 1
+}
+
+echo -e "\n🛡️  Hardening the server...\n"
+sleep 1
+setup_automatic_security_updates || {
+    echo -e "\n❌ Failed to set up automatic security updates. Exiting."
+    exit 1
+}
+setup_fail2ban || {
+    echo -e "\n❌ Failed to set up fail2ban. Exiting."
+    exit 1
+}
+setup_ufw || {
+    echo -e "\n❌ Failed to set up UFW. Exiting."
     exit 1
 }
 

@@ -116,6 +116,11 @@ setup_ufw() {
     # Allow Webhook Service
     ufw allow 9000/tcp
 
+    # Allow PostgreSQL if installed
+    if [ -f "/home/servonaut/.database_choice" ] && [ "$(cat /home/servonaut/.database_choice)" = "PostgreSQL" ]; then
+        ufw allow 5432/tcp
+    fi
+
     # Enable UFW
     echo "y" | ufw enable
 
