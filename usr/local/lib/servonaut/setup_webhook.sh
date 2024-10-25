@@ -8,6 +8,12 @@ setup_webhook() {
   mkdir -p /etc/webhook
   chmod 755 /etc/webhook
 
+  # Configure sudo permissions for webhook
+  cat >/etc/sudoers.d/webhook <<EOF
+servonaut ALL=(ALL) NOPASSWD: /bin/systemctl restart nuxt.service
+EOF
+  chmod 440 /etc/sudoers.d/webhook
+
   # Create webhook hooks configuration
   cat >/etc/webhook/hooks.json <<EOF
 [
@@ -71,6 +77,10 @@ EOF
   systemctl daemon-reload
   systemctl enable webhook.service
   systemctl start webhook.service
+
+  # Restart webhook and caddy services
+  systemctl restart caddy.service
+  systemctl restart webhook.service
 
   echo -e "\n✅ Webhook handler has been set up successfully."
   return 0
