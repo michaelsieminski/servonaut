@@ -115,9 +115,6 @@ setup_ufw() {
     # Allow Webhook Service
     ufw allow 9000/tcp
 
-    # Block null packets
-    ufw deny-incoming proto tcp flags FIN,SYN,RST,PSH,ACK,URG NONE
-
     # Block SYN-flood attacks
     ufw limit syn
 
@@ -148,6 +145,8 @@ Port 22
 Protocol 2
 PermitRootLogin no
 MaxAuthTries 3
+PubkeyAuthentication yes
+PasswordAuthentication yes
 PermitEmptyPasswords no
 ChallengeResponseAuthentication no
 UsePAM yes
