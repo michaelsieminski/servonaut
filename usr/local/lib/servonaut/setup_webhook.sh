@@ -15,28 +15,23 @@ setup_webhook() {
     "id": "servonaut-deploy",
     "execute-command": "/usr/local/lib/servonaut/auto_deploy.sh",
     "command-working-directory": "/var/www/app",
-    "response-message": "Deploying application...",
     "trigger-rule": {
       "and": [
         {
-          "match":
-          {
+          "match": {
             "type": "payload-hash-sha1",
             "secret": "$(cat /home/servonaut/.webhook_token)",
-            "parameter":
-            {
+            "parameter": {
               "source": "header",
               "name": "X-Hub-Signature"
             }
           }
         },
         {
-          "match":
-          {
+          "match": {
             "type": "value",
             "value": "refs/heads/main",
-            "parameter":
-            {
+            "parameter": {
               "source": "payload",
               "name": "ref"
             }
