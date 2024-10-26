@@ -1,61 +1,44 @@
-# Servonaut 🚀
+![Servonaut Banner](./public/banner.jpg)
 
-Servonaut is a one-click deployment solution for Nuxt.js applications on Ubuntu/Debian servers. It automatically sets up and configures all necessary components for a production-ready environment.
+## Servonaut
 
-## Features
+A zero-config deployment solution for Nuxt.js applications. Deploy your app to production in minutes, not days.
 
-### 🌐 Web Server
+### Features
 
-- Caddy server with automatic SSL
-- HTTP/2 support
-- Automatic HTTPS
-- Zero-downtime deployments
+- **Zero Configuration** - One command to set up your entire production environment
+- **Battle-tested Stack** - Caddy + PostgreSQL + Bun + Ubuntu
+- **Production Ready** - SSL, security, and performance optimized out of the box
+- **Auto Deploy** - Push to main, deploy to production
+- **Secure by Default** - Comprehensive security measures without the complexity
 
-### 🔄 CI/CD
+---
 
-- GitHub webhook integration
-- Automatic deployments
-- Zero-downtime updates
+### Prerequisites
 
-### 🗄️ Database
-
-- PostgreSQL setup with SSL
-- Secure remote access configuration
-- Automatic password generation
-- Easy credential management
-
-### 🛡️ Security
-
-- Automated server hardening
-- Fail2ban for brute-force protection
-- CrowdSec for advanced threat detection
-- UFW firewall configuration
-- Secure SSH setup
-- Automatic security updates
-- System-level security configurations
-
-## Prerequisites
-
-- A fresh Ubuntu/Debian server (ARM64)
-- Root access
+- Ubuntu/Debian ARM64 server (we recommend [Hetzner](https://www.hetzner.com/cloud/))
 - A domain name pointing to your server's IP
-- GitHub repository with your Nuxt.js project
+- Root SSH access to your server
 
-## Installation
+### Quick Start
 
-1. SSH into your server as root
-2. Clone the repository: `git clone https://github.com/michaelsieminski/servonaut.git`
-3. Install servonaut: `cd servonaut && sudo bash ./install.sh`
-4. Run `servonaut setup` to begin the setup process
+```bash
+# 1. Clone the repository
+git clone https://github.com/michaelsieminski/servonaut.git
 
-## Contributing
+# 2. Install Servonaut
+cd servonaut && sudo bash ./install.sh
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+# 3. Run setup
+servonaut setup
+```
 
-## License
+---
 
-MIT License
+### Contributing
 
-## Support
+We welcome contributions to improve Servonaut. Please feel free to create an issue or submit a pull request.
 
-For issues and feature requests, please open an issue on GitHub.
+### License
+
+Servonaut is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
