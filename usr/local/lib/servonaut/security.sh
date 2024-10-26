@@ -115,9 +115,6 @@ setup_ufw() {
     # Allow Webhook Service
     ufw allow 9000/tcp
 
-    # Block SYN-flood attacks
-    ufw limit syn
-
     # Rate limit SSH connections
     ufw limit ssh
 
