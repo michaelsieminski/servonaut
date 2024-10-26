@@ -118,9 +118,14 @@ setup_ufw() {
     # Rate limit SSH connections
     ufw limit ssh
 
-    # Allow PostgreSQL if installed
-    if [ -f "/home/servonaut/.database_choice" ] && [ "$(cat /home/servonaut/.database_choice)" = "PostgreSQL" ]; then
-        ufw allow 5432/tcp
+    # Allow database ports if installed
+    if [ -f "/home/servonaut/.database_choice" ]; then
+        db_choice=$(cat /home/servonaut/.database_choice)
+        if [ "$db_choice" = "PostgreSQL" ]; then
+            ufw allow 5432/tcp
+        elif [ "$db_choice" = "MySQL" ]; then
+            ufw allow 3306/tcp
+        fi
     fi
 
     # Enable UFW

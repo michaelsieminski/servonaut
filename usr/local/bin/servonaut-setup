@@ -54,6 +54,11 @@ if [ "$db_choice" = "PostgreSQL" ]; then
         echo -e "\n❌ Failed to set up PostgreSQL. Exiting."
         exit 1
     }
+elif [ "$db_choice" = "MySQL" ]; then
+    setup_mysql || {
+        echo -e "\n❌ Failed to set up MySQL. Exiting."
+        exit 1
+    }
 fi
 
 echo -e "\n🛡️  Hardening the server...\n"
