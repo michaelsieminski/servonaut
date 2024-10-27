@@ -154,8 +154,6 @@ user=root
 password=$root_password
 EOF
 
-    # Rest of the function remains the same...
-
     # Update MySQL configuration to allow remote connections
     cat >/etc/mysql/mysql.conf.d/mysqld.cnf <<EOF
 [mysqld]
@@ -168,13 +166,14 @@ mysqlx-bind-address = 0.0.0.0
 EOF
 
     # Secure the installation and create servonaut user/database
-    mysql <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$root_password';
+    mysql --defaults-file=/root/.my.cnf <<EOF
 DELETE FROM mysql.user WHERE User='';
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
-CREATE DATABASE servonaut;
+CREATE DATABASE IF NOT EXISTS servonaut;
+DROP USER IF EXISTS 'servonaut'@'localhost';
+DROP USER IF EXISTS 'servonaut'@'%';
 CREATE USER 'servonaut'@'localhost' IDENTIFIED WITH mysql_native_password BY '$db_password';
 CREATE USER 'servonaut'@'%' IDENTIFIED WITH mysql_native_password BY '$db_password';
 GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'localhost';
