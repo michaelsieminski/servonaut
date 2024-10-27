@@ -220,7 +220,7 @@ setup_crowdsec() {
     echo -e "🛡️  Setting up CrowdSec...\n"
 
     # Install CrowdSec
-    curl -s https://packagecloud.io/install/repositories/crowdsec/crowdsec/script.deb.sh | bash
+    curl -s https://install.crowdsec.net/ | sh
     apt-get install -y crowdsec
 
     # Install bouncer
