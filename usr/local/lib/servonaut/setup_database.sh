@@ -48,7 +48,7 @@ setup_postgres() {
     echo "host    all             all             0.0.0.0/0               md5" >>/etc/postgresql/$pg_version/main/pg_hba.conf
 
     # Generate secure password for postgres user
-    db_password=$(openssl rand -base64 24)
+    db_password=$(generate_safe_password)
     echo "$db_password" >/home/servonaut/.db_password
     chmod 600 /home/servonaut/.db_password
     chown servonaut:servonaut /home/servonaut/.db_password
@@ -117,8 +117,8 @@ setup_mysql() {
     echo -e "\n📦 Installing MySQL...\n"
 
     # Generate passwords
-    root_password=$(openssl rand -base64 24)
-    db_password=$(openssl rand -base64 24)
+    root_password=$(generate_safe_password)
+    db_password=$(generate_safe_password)
 
     # Pre-configure MySQL installation
     debconf-set-selections <<EOF

@@ -5,6 +5,7 @@ source /usr/local/lib/servonaut/utils/network.sh
 source /usr/local/lib/servonaut/utils/git.sh
 source /usr/local/lib/servonaut/utils/domain.sh
 source /usr/local/lib/servonaut/utils/ui.sh
+source /usr/local/lib/servonaut/utils/encryption.sh
 
 command="$1"
 shift
