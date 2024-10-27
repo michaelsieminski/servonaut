@@ -16,7 +16,7 @@ A zero-config deployment solution for Nuxt.js applications. Deploy your app to p
 
 ### Prerequisites
 
-- Ubuntu/Debian ARM64 server (we recommend [Hetzner](https://www.hetzner.com/cloud/))
+- Ubuntu/Debian server (ARM64 or x86_64) (we recommend [Hetzner](https://www.hetzner.com/cloud/))
 - A domain name pointing to your server's IP
 - Root SSH access to your server
 

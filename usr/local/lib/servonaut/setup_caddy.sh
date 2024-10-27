@@ -5,6 +5,7 @@ setup_caddy() {
     sleep 1
 
     domain_name=$(cat /home/servonaut/.domain_name)
+    arch=$(get_architecture)
 
     # Check and remove existing Caddy binary
     if [ -f "/usr/local/bin/caddy" ]; then
@@ -13,7 +14,7 @@ setup_caddy() {
     fi
 
     # Download Caddy binary directly
-    if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=arm64"; then
+    if ! curl -o /usr/local/bin/caddy -L "https://caddyserver.com/api/download?os=linux&arch=${arch}"; then
         echo -e "\nFailed to download Caddy. Please check your internet connection."
         exit 1
     fi

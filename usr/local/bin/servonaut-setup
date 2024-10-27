@@ -16,6 +16,7 @@ source /usr/local/lib/servonaut/setup_database.sh
 clear
 
 check_root || exit 1
+check_architecture || exit 1
 
 echo -e "\n🔄 Updating system packages...\n"
 sleep 1

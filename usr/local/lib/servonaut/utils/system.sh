@@ -16,3 +16,27 @@ update_system() {
         return 1
     fi
 }
+
+get_architecture() {
+    arch=$(uname -m)
+    case "$arch" in
+    "x86_64")
+        echo "amd64"
+        ;;
+    "aarch64")
+        echo "arm64"
+        ;;
+    *)
+        echo "unsupported"
+        ;;
+    esac
+}
+
+check_architecture() {
+    arch=$(get_architecture)
+    if [ "$arch" = "unsupported" ]; then
+        echo -e "❌ Unsupported architecture. Servonaut supports x86_64 and ARM64 only.\n"
+        return 1
+    fi
+    return 0
+}
