@@ -13,6 +13,14 @@ cmd_env() {
         fi
         add_env_variable "$2"
         ;;
+    "del")
+        if [ -z "$2" ]; then
+            echo -e "❌ Missing KEY\n"
+            echo "Usage: servonaut env del KEY"
+            return 1
+        fi
+        delete_env_variable "$2"
+        ;;
     *)
         echo -e "❌ Unknown command: servonaut env $1\n"
         source "/usr/local/lib/servonaut/commands/help.sh"
@@ -98,4 +106,34 @@ list_env_variables() {
     done <"/var/www/app/.env"
 
     printf "└────────────────────────────────┴──────────────────────┘\n"
+}
+
+delete_env_variable() {
+    local key=$1
+
+    # Check if .env exists
+    if [ ! -f "/var/www/app/.env" ]; then
+        echo -e "❌ No .env file found.\n"
+        return 1
+    fi
+
+    # Check if key exists
+    if ! grep -q "^${key}=" "/var/www/app/.env"; then
+        echo -e "❌ Environment variable '${key}' not found.\n"
+        return 1
+    fi
+
+    # Remove the line with the key
+    sudo -u servonaut sed -i "/^${key}=/d" /var/www/app/.env
+
+    echo -e "✅ Environment variable deleted successfully!\n"
+
+    # Restart Nuxt service to apply changes
+    if systemctl is-active --quiet nuxt.service; then
+        echo "🔄 Restarting Nuxt service to apply changes..."
+        sudo systemctl restart nuxt.service
+        echo -e "✅ Nuxt service restarted!\n"
+    fi
+
+    return 0
 }
