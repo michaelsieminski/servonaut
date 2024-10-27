@@ -14,6 +14,7 @@ A zero-config deployment solution for web applications. Deploy your app to produ
 - **Secure by Default** - Comprehensive security measures without the complexity
 - **Environment Variables** - Easily manage environment variables
 - **Flexible** - Automatically detects your web framework and builds around it
+- **Lightweight** - No bloat, just what is really needed in production
 
 ---
 
