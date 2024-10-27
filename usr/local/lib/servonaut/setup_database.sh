@@ -116,65 +116,55 @@ EOF
 setup_mysql() {
     echo -e "\n📦 Installing MySQL...\n"
 
-    # Set default root password
+    # Generate passwords
+    root_password=$(openssl rand -base64 24)
     db_password=$(openssl rand -base64 24)
-    echo "mysql-server mysql-server/root_password password $db_password" | debconf-set-selections
-    echo "mysql-server mysql-server/root_password_again password $db_password" | debconf-set-selections
 
-    # Install MySQL
-    apt-get install -y mysql-server
-
-    # Secure the installation
-    mysql_secure_installation <<EOF
-
-y
-2
-y
-y
-y
-y
+    # Pre-configure MySQL installation
+    debconf-set-selections <<EOF
+mysql-server mysql-server/root_password password $root_password
+mysql-server mysql-server/root_password_again password $root_password
+mysql-server mysql-server/default_auth_override select Use_Strong_Password_Encryption
 EOF
 
-    # Configure MySQL to listen on all interfaces
-    sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+    # Install MySQL non-interactively
+    DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server || {
+        echo -e "\n❌ Failed to install MySQL"
+        return 1
+    }
 
-    # Generate secure password for servonaut user
-    db_password=$(openssl rand -base64 24)
-    echo "$db_password" >/home/servonaut/.db_password
-    chmod 600 /home/servonaut/.db_password
-    chown servonaut:servonaut /home/servonaut/.db_password
+    # Start MySQL service
+    systemctl start mysql || {
+        echo -e "\n❌ Failed to start MySQL service"
+        return 1
+    }
 
-    # Check if user exists and update password, or create new user
-    if mysql -e "SELECT User FROM mysql.user WHERE User = 'servonaut'" | grep -q servonaut; then
-        echo "User 'servonaut' exists, updating password..."
-        mysql -e "ALTER USER 'servonaut'@'%' IDENTIFIED BY '$db_password';"
-    else
-        echo "Creating new user 'servonaut'..."
-        mysql -e "CREATE USER 'servonaut'@'%' IDENTIFIED BY '$db_password';"
-    fi
+    # Secure the installation and create servonaut user/database
+    mysql --user=root --password="$root_password" <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$root_password';
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+CREATE DATABASE servonaut;
+CREATE USER 'servonaut'@'localhost' IDENTIFIED BY '$db_password';
+GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'localhost';
+FLUSH PRIVILEGES;
+EOF
 
-    # Check if database exists, create if it doesn't
-    if ! mysql -e "SHOW DATABASES" | grep -q servonaut; then
-        mysql -e "CREATE DATABASE servonaut;"
-    fi
-
-    # Grant privileges
-    mysql -e "GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'%';"
-    mysql -e "FLUSH PRIVILEGES;"
-
-    # Restart MySQL to apply changes
-    systemctl restart mysql
-    systemctl enable mysql
+    # Store database choice
+    echo "MySQL" >/home/servonaut/.database_choice
+    chmod 600 /home/servonaut/.database_choice
+    chown servonaut:servonaut /home/servonaut/.database_choice
 
     # Get server IP
     server_ip=$(get_server_ip)
 
-    # Show connection details
-    clear
-    echo -e "🎉 MySQL Setup Complete!\n"
+    echo -e "\n✅ MySQL installed and configured successfully!\n"
+    echo -e "📝 Database Connection Details:\n"
 
     printf "┌─────────────────────────────────────────────────────────────┐\n"
-    printf "│ MySQL Connection Details                                    │\n"
+    printf "│ MySQL Connection Details                                     │\n"
     printf "├────────────────┬────────────────────────────────────────────┤\n"
     printf "│ Host           │ %-42s │\n" "$server_ip"
     printf "│ Port           │ %-42s │\n" "3306"

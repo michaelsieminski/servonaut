@@ -159,8 +159,14 @@ ClientAliveCountMax 2
 AllowUsers servonaut
 EOF
 
-    # Restart SSH service
-    systemctl restart sshd
+    # Try to restart SSH service with both possible service names
+    if systemctl is-active --quiet sshd.service; then
+        systemctl restart sshd.service
+    elif systemctl is-active --quiet ssh.service; then
+        systemctl restart ssh.service
+    else
+        echo -e "\n⚠️  Warning: Could not detect SSH service name. You may need to restart SSH manually."
+    fi
 
     echo -e "\n✅ SSH has been hardened successfully."
     return 0

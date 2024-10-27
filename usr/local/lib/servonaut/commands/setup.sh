@@ -3,7 +3,7 @@
 source /usr/local/lib/servonaut/install_dependencies.sh
 source /usr/local/lib/servonaut/security.sh
 source /usr/local/lib/servonaut/setup_caddy.sh
-source /usr/local/lib/servonaut/setup_nuxt.sh
+source /usr/local/lib/servonaut/setup_app.sh
 source /usr/local/lib/servonaut/setup_webhook.sh
 source /usr/local/lib/servonaut/setup_database.sh
 
