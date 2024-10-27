@@ -139,8 +139,15 @@ EOF
         return 1
     }
 
+    # Create temporary MySQL config file
+    cat >/root/.my.cnf <<EOF
+[client]
+user=root
+password=$root_password
+EOF
+
     # Secure the installation and create servonaut user/database
-    mysql --user=root --password="$root_password" <<EOF
+    mysql <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$root_password';
 DELETE FROM mysql.user WHERE User='';
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
@@ -151,6 +158,9 @@ CREATE USER 'servonaut'@'localhost' IDENTIFIED BY '$db_password';
 GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'localhost';
 FLUSH PRIVILEGES;
 EOF
+
+    # Remove temporary MySQL config
+    rm -f /root/.my.cnf
 
     # Store database choice
     echo "MySQL" >/home/servonaut/.database_choice
