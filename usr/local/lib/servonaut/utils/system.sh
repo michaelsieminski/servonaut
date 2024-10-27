@@ -22,10 +22,10 @@ get_architecture() {
     arch=$(uname -m)
     case "$arch" in
     "x86_64")
-        echo "x86"
+        echo "amd64"
         ;;
     "aarch64")
-        echo "arm"
+        echo "arm64"
         ;;
     *)
         echo "unsupported"
