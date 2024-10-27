@@ -6,7 +6,6 @@ cmd_env() {
         list_env_variables
         ;;
     *)
-        cmd_help
         return 1
         ;;
     esac

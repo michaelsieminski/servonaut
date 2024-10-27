@@ -19,28 +19,28 @@ cmd_setup() {
         exit 1
     }
 
-    echo -e "\n� Setting up servonaut user...\n"
+    echo -e "\n🔄 Setting up servonaut user...\n"
     sleep 1
     setup_servonaut_user || {
         echo -e "\n❌ Failed to set up servonaut user. Exiting."
         exit 1
     }
 
-    echo -e "\n� Installing dependencies...\n"
+    echo -e "\n🔄 Installing dependencies...\n"
     sleep 1
     install_dependencies || {
         echo -e "\n❌ Failed to install dependencies. Exiting."
         exit 1
     }
 
-    echo -e "\n� Setting up domain...\n"
+    echo -e "\n🔄 Setting up domain...\n"
     sleep 1
     setup_domain || {
         echo -e "\n❌ Failed to set up domain. Exiting."
         exit 1
     }
 
-    echo -e "\n�️  Setting up database...\n"
+    echo -e "\n🔄 Setting up database...\n"
     sleep 1
     select_database
     db_choice=$(cat /home/servonaut/.database_choice)
@@ -56,7 +56,7 @@ cmd_setup() {
         }
     fi
 
-    echo -e "\n�️  Hardening the server...\n"
+    echo -e "\n🔄 Hardening the server...\n"
     sleep 1
     setup_system_security || {
         echo -e "\n❌ Failed to configure system security. Exiting."
@@ -83,21 +83,21 @@ cmd_setup() {
         exit 1
     }
 
-    echo -e "\n�️  Setting up Nuxt project...\n"
+    echo -e "\n🔄 Setting up web application...\n"
     sleep 1
     setup_nuxt || {
-        echo -e "\n❌ Failed to set up Nuxt project. Exiting."
+        echo -e "\n❌ Failed to set up web application. Exiting."
         exit 1
     }
 
-    echo -e "\n� Setting up Caddy web server...\n"
+    echo -e "\n🔄 Setting up Caddy web server...\n"
     sleep 1
     setup_caddy || {
         echo -e "\n❌ Failed to set up Caddy web server. Exiting."
         exit 1
     }
 
-    echo -e "\n🎣 Setting up webhook handler...\n"
+    echo -e "\n🔄 Setting up webhook handler...\n"
     sleep 1
     setup_webhook || {
         echo -e "\n❌ Failed to set up webhook handler. Exiting."
