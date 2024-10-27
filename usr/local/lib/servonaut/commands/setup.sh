@@ -104,11 +104,11 @@ cmd_setup() {
         exit 1
     }
 
-    echo -e "\n🔄 Reloading systemd and restarting Nuxt service..."
+    echo -e "\n🔄 Reloading systemd and restarting application service..."
     sleep 1
     systemctl daemon-reload
-    systemctl restart nuxt.service || {
-        echo -e "\n❌ Failed to restart Nuxt service. Exiting."
+    systemctl restart app.service || {
+        echo -e "\n❌ Failed to restart application service. Exiting."
         exit 1
     }
 

@@ -13,7 +13,7 @@ cmd_help() {
 ********                                                                                 
 EOF
 
-    echo -e "\nWelcome to Servonaut - Your one-click Nuxt deployment solution!\n"
+    echo -e "\nWelcome to Servonaut - Your one-click deployment solution!\n"
 
     echo "Available commands:"
     echo "  servonaut setup     - Setup Servonaut on your server"

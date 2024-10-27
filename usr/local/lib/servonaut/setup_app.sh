@@ -31,8 +31,12 @@ setup_app() {
     echo -e "\n📦 Installing dependencies...\n"
     sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut /home/servonaut/.bun/bin/bun install'
 
-    echo -e "\n🏗️  Building the Nuxt project...\n"
-    sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build || true'
+    echo -e "\n🏗️  Building the application...\n"
+    echo -e "\n🏗️  Building the application...\n"
+    sudo -u servonaut bash -c 'cd /var/www/app && \
+        export PATH="/home/servonaut/.bun/bin:$PATH" && \
+        export BUN_INSTALL="/home/servonaut/.bun" && \
+        TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build || true'
 
     # Ensure permissions are maintained after build
     chown -R servonaut:servonaut /var/www/app

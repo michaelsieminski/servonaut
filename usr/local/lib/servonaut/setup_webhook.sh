@@ -10,7 +10,7 @@ setup_webhook() {
 
   # Configure sudo permissions for webhook
   cat >/etc/sudoers.d/webhook <<EOF
-servonaut ALL=(ALL) NOPASSWD: /bin/systemctl restart nuxt.service
+servonaut ALL=(ALL) NOPASSWD: /bin/systemctl restart app.service
 EOF
   chmod 440 /etc/sudoers.d/webhook
 

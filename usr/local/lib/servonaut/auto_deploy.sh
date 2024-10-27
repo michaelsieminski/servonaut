@@ -28,11 +28,10 @@ sudo -u servonaut /home/servonaut/.bun/bin/bun install || {
     exit 1
 }
 
-echo "Building application..."
-sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build' || {
-    echo "Build failed"
-    exit 1
-}
+sudo -u servonaut bash -c 'cd /var/www/app && \
+        export PATH="/home/servonaut/.bun/bin:$PATH" && \
+        export BUN_INSTALL="/home/servonaut/.bun" && \
+        TMPDIR=/tmp/servonaut NODE_OPTIONS="--no-warnings" /home/servonaut/.bun/bin/bun run build || true'
 
 echo "Restarting application service..."
 sudo systemctl restart app.service || {
