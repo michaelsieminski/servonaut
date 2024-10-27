@@ -146,6 +146,17 @@ user=root
 password=$root_password
 EOF
 
+    # Update MySQL configuration to allow remote connections
+    cat >/etc/mysql/mysql.conf.d/mysqld.cnf <<EOF
+[mysqld]
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+datadir         = /var/lib/mysql
+log-error       = /var/log/mysql/error.log
+bind-address    = 0.0.0.0
+mysqlx-bind-address = 0.0.0.0
+EOF
+
     # Secure the installation and create servonaut user/database
     mysql <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$root_password';
@@ -154,13 +165,18 @@ DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 CREATE DATABASE servonaut;
-CREATE USER 'servonaut'@'localhost' IDENTIFIED BY '$db_password';
+CREATE USER 'servonaut'@'localhost' IDENTIFIED WITH mysql_native_password BY '$db_password';
+CREATE USER 'servonaut'@'%' IDENTIFIED WITH mysql_native_password BY '$db_password';
 GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'localhost';
+GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'%';
 FLUSH PRIVILEGES;
 EOF
 
     # Remove temporary MySQL config
     rm -f /root/.my.cnf
+
+    # Restart MySQL to apply changes
+    systemctl restart mysql
 
     # Store database choice
     echo "MySQL" >/home/servonaut/.database_choice
