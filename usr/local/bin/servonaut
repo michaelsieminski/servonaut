@@ -1,44 +1,20 @@
 #!/bin/bash
 
-# Function to display the help message
-show_help() {
-      cat <<"EOF"
---------                                                                                  
-@@@@@@@@.                                                                            
-@@@@@@@@.      sssss   eeeeee  rrrrrr   v   v   ooooo   n   nn  aaaaaa  u   uu  ttttt
-@@@@@@@@.     ss      ee      rr   rr  v   v  oo   oo  nn  nn  aa  aa  u   uu    tt
-@@@@@@@@.      ssss   eeeeee  rrrrrr    v v   oo   oo  nnnnnn  aaaaaaa u   uu    tt
-@%====#@.        sss  ee      rr  rr     v    oo   oo  nn  nn  aa   aa u   uu    tt
-@#    +@.     sssss    eeeeee rr   rr    v     ooooo   nn  nn  aa   aa  uuuuu    tt
-@#....+@.                                                                                  
-********                                                                                 
-EOF
+source /usr/local/lib/servonaut/utils/system.sh
+source /usr/local/lib/servonaut/utils/network.sh
+source /usr/local/lib/servonaut/utils/git.sh
+source /usr/local/lib/servonaut/utils/domain.sh
+source /usr/local/lib/servonaut/utils/ui.sh
 
-      echo -e "\nWelcome to Servonaut - Your one-click Nuxt deployment solution!\n"
+command="$1"
+shift
 
-      echo "Available commands:"
-      echo "  servonaut setup     - Set up a new Nuxt deployment"
-      echo "  servonaut update    - Update Servonaut to the latest version"
-
-      echo -e "\nFor more information, visit: https://github.com/michaelsieminski/servonaut"
-}
-
-# Check if a subcommand was provided
-if [ $# -eq 0 ]; then
-      show_help
-      exit 0
-fi
-
-# Handle subcommands
-case "$1" in
-setup)
-      /usr/local/bin/servonaut-setup
-      ;;
-update)
-      /usr/local/bin/servonaut-update
-      ;;
-*)
-      echo "Unknown command: $1"
+if [ -f "/usr/local/lib/servonaut/commands/${command}.sh" ]; then
+      source "/usr/local/lib/servonaut/commands/${command}.sh"
+      "cmd_${command}" "$@"
+else
+      # Show help if no valid command is provided
+      source "/usr/local/lib/servonaut/commands/help.sh"
+      cmd_help
       exit 1
-      ;;
-esac
+fi

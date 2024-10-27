@@ -1,10 +1,11 @@
 #!/bin/bash
 
 check_root() {
-    if [ "$(id -u)" != "0" ]; then
-        echo -e "❌ This script must be run as root\n"
-        exit 1
+    if ! sudo -v &>/dev/null; then
+        echo -e "❌ This command requires root privileges (either root user or sudo access)\n"
+        return 1
     fi
+    return 0
 }
 
 update_system() {
