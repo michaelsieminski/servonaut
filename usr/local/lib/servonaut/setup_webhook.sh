@@ -8,6 +8,10 @@ setup_webhook() {
   mkdir -p /etc/webhook
   chmod 755 /etc/webhook
 
+  # Ensure auto_deploy.sh has correct permissions
+  chmod +x /usr/local/lib/servonaut/auto_deploy.sh
+  chown servonaut:servonaut /usr/local/lib/servonaut/auto_deploy.sh
+
   # Configure sudo permissions for webhook
   cat >/etc/sudoers.d/webhook <<EOF
 servonaut ALL=(ALL) NOPASSWD: /bin/systemctl restart app.service
@@ -66,7 +70,9 @@ After=network.target
 Type=simple
 User=servonaut
 Environment=WEBHOOK_SECRET=$(cat /home/servonaut/.webhook_token)
-ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000
+ExecStart=/usr/bin/webhook -hooks /etc/webhook/hooks.json -port 9000 -verbose -hotreload
+StandardOutput=journal
+StandardError=journal
 Restart=on-failure
 
 [Install]

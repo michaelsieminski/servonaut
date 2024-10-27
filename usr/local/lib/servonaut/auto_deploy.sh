@@ -28,6 +28,16 @@ sudo -u servonaut /home/servonaut/.bun/bin/bun install || {
     exit 1
 }
 
+echo "Cleaning build directories..."
+sudo -u servonaut rm -rf \
+    /var/www/app/dist \
+    /var/www/app/.output \
+    /var/www/app/build \
+    /var/www/app/.next \
+    /var/www/app/out \
+    /var/www/app/.nuxt \
+    /var/www/app/public/build
+
 sudo -u servonaut bash -c 'cd /var/www/app && \
         export PATH="/home/servonaut/.bun/bin:$PATH" && \
         export BUN_INSTALL="/home/servonaut/.bun" && \

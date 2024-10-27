@@ -32,7 +32,6 @@ setup_app() {
     sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut /home/servonaut/.bun/bin/bun install'
 
     echo -e "\n🏗️  Building the application...\n"
-    echo -e "\n🏗️  Building the application...\n"
     sudo -u servonaut bash -c 'cd /var/www/app && \
         export PATH="/home/servonaut/.bun/bin:$PATH" && \
         export BUN_INSTALL="/home/servonaut/.bun" && \
