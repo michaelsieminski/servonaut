@@ -7,11 +7,13 @@ A zero-config deployment solution for web applications. Deploy your app to produ
 ### Features
 
 - **Zero Configuration** - One command to set up your entire production environment
-- **Battle-tested Stack** - Caddy + PostgreSQL + Bun + Ubuntu
+- **Battle-tested Stack** - Using Caddy Webserver to serve your application
 - **Framework Agnostic** - Works with most web frameworks
 - **Production Ready** - SSL, security, and performance optimized out of the box
 - **Auto Deploy** - Push to main, deploy to production
 - **Secure by Default** - Comprehensive security measures without the complexity
+- **Environment Variables** - Easily manage environment variables
+- **Flexible** - Automatically detects your web framework and builds around it
 
 ---
 
