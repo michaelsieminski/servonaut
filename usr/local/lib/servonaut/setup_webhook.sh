@@ -25,7 +25,7 @@ EOF
       "and": [
         {
           "match": {
-            "type": "payload-hmac-sha1",
+            "type": "payload-hash-sha1",
             "secret": "$(cat /home/servonaut/.webhook_token)",
             "parameter": {
               "source": "header",
