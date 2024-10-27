@@ -139,12 +139,22 @@ EOF
         return 1
     }
 
+    # Initialize MySQL with root privileges using debian-sys-maint
+    debian_sys_maint_password=$(grep -Po "password = \K.*" /etc/mysql/debian.cnf | head -n 1)
+
+    mysql -u debian-sys-maint -p"${debian_sys_maint_password}" <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$root_password';
+FLUSH PRIVILEGES;
+EOF
+
     # Create temporary MySQL config file
     cat >/root/.my.cnf <<EOF
 [client]
 user=root
 password=$root_password
 EOF
+
+    # Rest of the function remains the same...
 
     # Update MySQL configuration to allow remote connections
     cat >/etc/mysql/mysql.conf.d/mysqld.cnf <<EOF
