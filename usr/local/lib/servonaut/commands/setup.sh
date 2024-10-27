@@ -85,7 +85,7 @@ cmd_setup() {
 
     echo -e "\n🔄 Setting up web application...\n"
     sleep 1
-    setup_nuxt || {
+    setup_app || {
         echo -e "\n❌ Failed to set up web application. Exiting."
         exit 1
     }

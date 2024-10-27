@@ -58,11 +58,11 @@ add_env_variable() {
 
     echo -e "✅ Environment variable added successfully!\n"
 
-    # Restart Nuxt service to apply changes
-    if systemctl is-active --quiet nuxt.service; then
-        echo "🔄 Restarting Nuxt service to apply changes..."
-        sudo systemctl restart nuxt.service
-        echo -e "✅ Nuxt service restarted!\n"
+    # Restart App service to apply changes
+    if systemctl is-active --quiet app.service; then
+        echo "🔄 Restarting application service to apply changes..."
+        sudo systemctl restart app.service
+        echo -e "✅ App service restarted!\n"
     fi
 
     return 0
@@ -128,11 +128,11 @@ delete_env_variable() {
 
     echo -e "✅ Environment variable deleted successfully!\n"
 
-    # Restart Nuxt service to apply changes
-    if systemctl is-active --quiet nuxt.service; then
-        echo "🔄 Restarting Nuxt service to apply changes..."
-        sudo systemctl restart nuxt.service
-        echo -e "✅ Nuxt service restarted!\n"
+    # Restart application service to apply changes
+    if systemctl is-active --quiet app.service; then
+        echo "🔄 Restarting application service to apply changes..."
+        sudo systemctl restart app.service
+        echo -e "✅ App service restarted!\n"
     fi
 
     return 0

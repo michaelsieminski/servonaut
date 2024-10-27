@@ -34,9 +34,9 @@ sudo -u servonaut bash -c 'cd /var/www/app && TMPDIR=/tmp/servonaut NODE_OPTIONS
     exit 1
 }
 
-echo "Restarting Nuxt service..."
-sudo systemctl restart nuxt.service || {
-    echo "Service restart failed"
+echo "Restarting application service..."
+sudo systemctl restart app.service || {
+    echo "App service restart failed"
     exit 1
 }
 

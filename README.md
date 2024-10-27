@@ -2,12 +2,13 @@
 
 ## Servonaut
 
-A zero-config deployment solution for Nuxt.js applications. Deploy your app to production in minutes, not days.
+A zero-config deployment solution for web applications. Deploy your app to production in minutes, not days.
 
 ### Features
 
 - **Zero Configuration** - One command to set up your entire production environment
 - **Battle-tested Stack** - Caddy + PostgreSQL + Bun + Ubuntu
+- **Framework Agnostic** - Works with most web frameworks
 - **Production Ready** - SSL, security, and performance optimized out of the box
 - **Auto Deploy** - Push to main, deploy to production
 - **Secure by Default** - Comprehensive security measures without the complexity
@@ -16,7 +17,7 @@ A zero-config deployment solution for Nuxt.js applications. Deploy your app to p
 
 ### Prerequisites
 
-- Ubuntu/Debian server (ARM64 or x86_64) (we recommend [Hetzner](https://www.hetzner.com/cloud/))
+- Ubuntu/Debian server (arm or x86) (we recommend [Hetzner](https://www.hetzner.com/cloud/))
 - A domain name pointing to your server's IP
 - Root SSH access to your server
 
@@ -31,6 +32,17 @@ cd servonaut && sudo bash ./install.sh
 
 # 3. Run setup
 servonaut setup
+```
+
+### Commands
+
+```bash
+servonaut help - Shows all available commands
+servonaut update - Updates Servonaut to the latest version
+servonaut setup - Sets up your production environment
+servonaut env list - Lists all environment variables
+servonaut env add - Adds an environment variable
+servonaut env del - Deletes an environment variable
 ```
 
 ---

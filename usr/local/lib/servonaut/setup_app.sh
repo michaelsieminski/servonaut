@@ -1,7 +1,7 @@
 #!/bin/bash
 
-setup_nuxt() {
-    echo -e "📁 Setting up Nuxt project directory\n"
+setup_app() {
+    echo -e "📁 Setting up application directory\n"
 
     # Check if app directory exists and remove it if it does
     if [ -d "/var/www/app" ]; then
@@ -38,10 +38,10 @@ setup_nuxt() {
     chown -R servonaut:servonaut /var/www/app
     chmod -R 755 /var/www/app
 
-    echo -e "\n🔧 Creating systemd service for Nuxt..."
-    cat >/etc/systemd/system/nuxt.service <<EOF
+    echo -e "\n🔧 Creating systemd service for application..."
+    cat >/etc/systemd/system/app.service <<EOF
 [Unit]
-Description=Nuxt Application
+Description=Web Application
 After=network.target
 
 [Service]
@@ -57,9 +57,9 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-    echo -e "\n🚀 Enabling and starting Nuxt service..."
-    systemctl enable nuxt.service
-    systemctl start nuxt.service
+    echo -e "\n🚀 Enabling and starting application service..."
+    systemctl enable app.service
+    systemctl start app.service
 
     echo -e "\n🔧 Setting up GitHub webhook for automatic deployments..."
     domain_name=$(cat /home/servonaut/.domain_name)
