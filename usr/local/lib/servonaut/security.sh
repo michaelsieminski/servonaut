@@ -125,6 +125,8 @@ setup_ufw() {
             ufw allow 5432/tcp
         elif [ "$db_choice" = "MySQL" ]; then
             ufw allow 3306/tcp
+        elif [ "$db_choice" = "MariaDB" ]; then
+            ufw allow 3306/tcp
         fi
     fi
 

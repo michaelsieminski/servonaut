@@ -54,6 +54,11 @@ cmd_setup() {
             echo -e "\n❌ Failed to set up MySQL. Exiting."
             exit 1
         }
+    elif [ "$db_choice" = "MariaDB" ]; then
+        setup_mariadb || {
+            echo -e "\n❌ Failed to set up MariaDB. Exiting."
+            exit 1
+        }
     fi
 
     echo -e "\n🔄 Hardening the server...\n"

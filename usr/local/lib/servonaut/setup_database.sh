@@ -2,7 +2,7 @@
 
 select_database() {
     # Available options
-    options=("No database" "PostgreSQL (recommended for production)" "MySQL")
+    options=("No database" "PostgreSQL (recommended for production)" "MySQL" "MariaDB")
 
     # Call select_option with more friendly messages
     select_option "Would you like to install a database?" "Use arrow keys to select an option, Enter to confirm" "${options[@]}"
@@ -18,6 +18,9 @@ select_database() {
         ;;
     "MySQL")
         choice="MySQL"
+        ;;
+    "MariaDB")
+        choice="MariaDB"
         ;;
     esac
 
@@ -214,6 +217,73 @@ EOF
     echo -e "\n⚠️  Make sure to save these credentials securely!"
     echo -e "Press ENTER to continue..."
     read -r
+
+    return 0
+}
+
+setup_mariadb() {
+    echo -e "\n📦 Installing MariaDB...\n"
+
+    # Generate passwords
+    root_password=$(generate_safe_password)
+    db_password=$(generate_safe_password)
+
+    # Pre-configure MariaDB installation
+    debconf-set-selections <<EOF
+mariadb-server mysql-server/root_password password $root_password
+mariadb-server mysql-server/root_password_again password $root_password
+EOF
+
+    # Install MariaDB non-interactively
+    DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server || {
+        echo -e "\n❌ Failed to install MariaDB"
+        return 1
+    }
+
+    # Configure MariaDB to listen on all interfaces
+    cat >/etc/mysql/mariadb.conf.d/50-server.cnf <<EOF
+[mysqld]
+bind-address = 0.0.0.0
+EOF
+
+    # Secure the installation and create servonaut user/database
+    mysql -u root <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$root_password';
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+CREATE DATABASE IF NOT EXISTS servonaut;
+DROP USER IF EXISTS 'servonaut'@'localhost';
+DROP USER IF EXISTS 'servonaut'@'%';
+CREATE USER 'servonaut'@'localhost' IDENTIFIED BY '$db_password';
+CREATE USER 'servonaut'@'%' IDENTIFIED BY '$db_password';
+GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'localhost';
+GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'%';
+FLUSH PRIVILEGES;
+EOF
+
+    # Restart MariaDB to apply changes
+    systemctl restart mariadb
+
+    # Get server IP
+    server_ip=$(get_server_ip)
+
+    # Display connection details
+    echo -e "\n✅ MariaDB installed and configured successfully!\n"
+
+    printf "┌─────────────────────────────────────────────────────────────┐\n"
+    printf "│ MariaDB Connection Details                                   │\n"
+    printf "├────────────────┬────────────────────────────────────────────┤\n"
+    printf "│ Host           │ %-42s │\n" "$server_ip"
+    printf "│ Port           │ %-42s │\n" "3306"
+    printf "│ Database       │ %-42s │\n" "servonaut"
+    printf "│ Username       │ %-42s │\n" "servonaut"
+    printf "│ Password       │ %-42s │\n" "$db_password"
+    printf "└────────────────┴────────────────────────────────────────────┘\n"
+
+    echo -e "\n📋 TablePlus Connection URL:"
+    echo "mysql://servonaut:${db_password}@${server_ip}:3306/servonaut"
 
     return 0
 }
