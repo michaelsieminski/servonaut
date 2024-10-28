@@ -7,7 +7,7 @@ A zero-config deployment solution for web applications. Deploy your app to produ
 ### Features
 
 - **Zero Configuration** - One command to set up your entire production environment
-- **Battle-tested Stack** - Using Caddy Webserver to serve your application
+- **Battle-tested Stack** - Web Server, SSL, Database, Caching, and more
 - **Framework Agnostic** - Works with most web frameworks
 - **Production Ready** - SSL, security, and performance optimized out of the box
 - **Auto Deploy** - Push to main, deploy to production
@@ -46,6 +46,7 @@ servonaut setup - Sets up your production environment
 servonaut env list - Lists all environment variables
 servonaut env add - Adds an environment variable
 servonaut env del - Deletes an environment variable
+servonaut status - Checks the status of your deployment
 ```
 
 ---
