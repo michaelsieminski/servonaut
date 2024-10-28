@@ -22,6 +22,7 @@ EOF
     echo "  servonaut env list  - List all environment variables"
     echo "  servonaut env add   - Add an environment variable"
     echo "  servonaut env del   - Remove an environment variable"
+    echo "  servonaut status    - Check the status of your deployment"
 
     echo -e "\nFor more information, visit: https://github.com/michaelsieminski/servonaut"
 }
