@@ -240,6 +240,13 @@ EOF
         return 1
     }
 
+    # Create temporary MySQL config file
+    cat >/root/.my.cnf <<EOF
+[client]
+user=root
+password=$root_password
+EOF
+
     # Configure MariaDB to listen on all interfaces
     cat >/etc/mysql/mariadb.conf.d/50-server.cnf <<EOF
 [mysqld]
@@ -247,8 +254,7 @@ bind-address = 0.0.0.0
 EOF
 
     # Secure the installation and create servonaut user/database
-    mysql -u root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$root_password';
+    mysql --defaults-file=/root/.my.cnf <<EOF
 DELETE FROM mysql.user WHERE User='';
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 DROP DATABASE IF EXISTS test;
@@ -262,6 +268,9 @@ GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'localhost';
 GRANT ALL PRIVILEGES ON servonaut.* TO 'servonaut'@'%';
 FLUSH PRIVILEGES;
 EOF
+
+    # Remove temporary MySQL config
+    rm -f /root/.my.cnf
 
     # Restart MariaDB to apply changes
     systemctl restart mariadb
