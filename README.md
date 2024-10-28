@@ -2,7 +2,7 @@
 
 ## Servonaut
 
-A zero-config deployment solution for web applications. Deploy your app to production in minutes, not days.
+A zero-config deployment solution for js web applications. Deploy your app to production in minutes, not days.
 
 ### Features
 
