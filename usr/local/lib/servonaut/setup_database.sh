@@ -285,5 +285,9 @@ EOF
     echo -e "\n📋 TablePlus Connection URL:"
     echo "mysql://servonaut:${db_password}@${server_ip}:3306/servonaut"
 
+    echo -e "\n⚠️  Make sure to save these credentials securely!"
+    echo -e "Press ENTER to continue..."
+    read -r
+
     return 0
 }
