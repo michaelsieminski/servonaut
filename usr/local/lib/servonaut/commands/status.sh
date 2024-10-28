@@ -33,7 +33,7 @@ check_all_services() {
 
 check_site() {
     local domain=$(cat /home/servonaut/.domain_name)
-    if curl -s -I "https://$domain" 2>/dev/null | grep -q "HTTP/2 200"; then
+    if nc -z -w5 "$domain" 443 2>/dev/null; then
         return 0
     else
         return 1
