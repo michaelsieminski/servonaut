@@ -4,11 +4,11 @@ cmd_help() {
     cat <<"EOF"
 --------                                                                                  
 @@@@@@@@.                                                                            
-@@@@@@@@.      sssss   eeeeee  rrrrrr   v   v   ooooo   n   nn  aaaaaa   u   uu  ttttt
-@@@@@@@@.     ss      ee       rr   rr  v   v  oo   oo  nn  nn  aa  aa   u   uu    tt
-@@@@@@@@.      ssss   eeeeee   rrrrrr    v v   oo   oo  nnn nn  aaaaaaa  u   uu    tt
-@%====#@.        sss  ee       rr  rr     v    oo   oo  nn nnn  aa   aa  u   uu    tt
-@#    +@.     sssss    eeeeee  rr   rr    v     ooooo   nn  nn  aa   aa   uuuuu    tt
+@@@@@@@@.      sssss   eeeeee  rrrrrr   vv   vv   ooooo   n   nn  aaaaaaa  uu   uu  tttttt
+@@@@@@@@.     ss      ee       rr   rr  vv   vv  oo   oo  nn  nn  aa   aa  uu   uu    tt
+@@@@@@@@.      ssss   eeeeee   rrrrrr   vv   vv  oo   oo  nnn nn  aaaaaaa  uu   uu    tt
+@%====#@.         ss  ee       rr  rr    vv vv   oo   oo  nn nnn  aa   aa  uu   uu    tt
+@#    +@.     sssss    eeeeee  rr   rr    vvv     ooooo   nn  nn  aa   aa   uuuuu     tt
 @#....+@.                                                                                  
 ********                                                                                 
 EOF
