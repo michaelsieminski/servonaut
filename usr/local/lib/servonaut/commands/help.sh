@@ -6,8 +6,8 @@ cmd_help() {
 @@@@@@@@.                                                                            
 @@@@@@@@.      sssss   eeeeee  rrrrrr   v   v   ooooo   n   nn  aaaaaa   u   uu  ttttt
 @@@@@@@@.     ss      ee       rr   rr  v   v  oo   oo  nn  nn  aa  aa   u   uu    tt
-@@@@@@@@.      ssss   eeeeee   rrrrrr    v v   oo   oo  nnnnnn  aaaaaaa  u   uu    tt
-@%====#@.        sss  ee       rr  rr     v    oo   oo  nn  nn  aa   aa  u   uu    tt
+@@@@@@@@.      ssss   eeeeee   rrrrrr    v v   oo   oo  nnn nn  aaaaaaa  u   uu    tt
+@%====#@.        sss  ee       rr  rr     v    oo   oo  nn nnn  aa   aa  u   uu    tt
 @#    +@.     sssss    eeeeee  rr   rr    v     ooooo   nn  nn  aa   aa   uuuuu    tt
 @#....+@.                                                                                  
 ********                                                                                 
