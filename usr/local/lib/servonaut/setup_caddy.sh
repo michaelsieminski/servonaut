@@ -22,6 +22,29 @@ setup_caddy() {
     # Make Caddy executable
     chmod +x /usr/local/bin/caddy
 
+    # Configure Caddy
+    mkdir -p /etc/caddy
+    cat >/etc/caddy/Caddyfile <<EOF
+{
+    admin localhost:2019
+}
+$domain_name {
+    root * /var/www/app/.output/public
+    encode gzip
+    file_server
+    handle /hooks/* {
+        reverse_proxy localhost:9000
+    }
+    handle /* {
+        reverse_proxy localhost:3000
+    }
+}
+EOF
+
+    chown -R servonaut:servonaut /etc/caddy
+    chmod 755 /etc/caddy
+    chmod 644 /etc/caddy/Caddyfile
+
     # Setup Caddy as a service
     cat >/etc/systemd/system/caddy.service <<EOF
 [Unit]
@@ -30,8 +53,8 @@ After=network.target
 
 [Service]
 User=servonaut
-ExecStart=/usr/local/bin/caddy run --config /etc/caddy/Caddyfile
-ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile
+ExecStart=/usr/local/bin/caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
 TimeoutStopSec=5s
 LimitNOFILE=1048576
 LimitNPROC=512
@@ -50,31 +73,9 @@ EOF
         return 1
     fi
 
-    # Configure Caddy
-    mkdir -p /etc/caddy
-    cat >/etc/caddy/Caddyfile <<EOF
-$domain_name {
-    root * /var/www/app/.output/public
-    encode gzip
-    file_server
-
-    handle /hooks/* {
-        reverse_proxy localhost:9000
-    }
-
-    handle /* {
-        reverse_proxy localhost:3000
-    }
-}
-EOF
-
-    chown -R servonaut:servonaut /etc/caddy
-    chmod 755 /etc/caddy
-    chmod 644 /etc/caddy/Caddyfile
-
     # Reload Caddy to apply the changes
-    if ! systemctl reload caddy.service; then
-        echo -e "\n Failed to reload Caddy service. Check the logs with 'journalctl -u caddy.service'"
+    if ! systemctl restart caddy.service; then
+        echo -e "\n Failed to restart Caddy service. Check the logs with 'journalctl -u caddy.service'"
         return 1
     fi
 
